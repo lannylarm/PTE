@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PTE 复述练习">
+<meta name="theme-color" content="#080810">
+<title>PTE 复述句子</title>
+<style>
+:root {
+  --bg:#080810;--s1:#13131f;--s2:#1e1e2e;--s3:#2a2a3e;--s4:#363650;
+  --t1:#e8e8f0;--t2:rgba(232,232,240,0.55);--t3:rgba(232,232,240,0.28);
+  --bd:rgba(232,232,240,0.08);--bd2:rgba(232,232,240,0.14);
+  --blue:#5b8dee;--blue-bg:rgba(91,141,238,0.13);--blue-bd:rgba(91,141,238,0.28);
+  --green:#30d158;--green-bg:rgba(48,209,88,0.12);--green-bd:rgba(48,209,88,0.28);
+  --red:#ff453a;--red-bg:rgba(255,69,58,0.12);
+  --amber:#ffd60a;--amber-bg:rgba(255,214,10,0.12);
+  --purple:#bf5af2;--purple-bg:rgba(191,90,242,0.12);
+  --safe-top:env(safe-area-inset-top,44px);
+  --safe-bot:env(safe-area-inset-bottom,34px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;background:var(--bg);color:var(--t1);display:flex;flex-direction:column;}
+.page{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.page.active{opacity:1;pointer-events:all;}
+.safe-top{height:var(--safe-top);flex-shrink:0;}
+.safe-bot{height:var(--safe-bot);flex-shrink:0;}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 6px;flex-shrink:0;}
+.hdr-title{font-size:20px;font-weight:700;letter-spacing:-0.4px;}
+.hdr-right{font-size:12px;color:var(--t3);}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:12px 18px 20px;}
+.card{background:var(--s1);border:0.5px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:12px;}
+.card-lbl{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:10px;}
+.pill-blue{background:var(--blue-bg);color:var(--blue);}
+.pill-green{background:var(--green-bg);color:var(--green);}
+.pill-amber{background:var(--amber-bg);color:var(--amber);}
+.pill-red{background:var(--red-bg);color:var(--red);}
+.pill-purple{background:var(--purple-bg);color:var(--purple);}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.dot.pulse{animation:blink 1s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+.row3{display:flex;gap:7px;margin-bottom:10px;}
+.seg-btn{flex:1;padding:8px 4px;font-size:12px;font-weight:600;border:1px solid var(--bd2);border-radius:10px;background:none;color:var(--t2);cursor:pointer;transition:all 0.18s;text-align:center;}
+.seg-btn.on-blue{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
+.seg-btn.on-green{border-color:var(--green);color:var(--green);background:var(--green-bg);}
+.seg-btn.on-purple{border-color:var(--purple);color:var(--purple);background:var(--purple-bg);}
+.prog-track{height:3px;border-radius:2px;background:var(--s3);margin-top:10px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;background:var(--blue);transition:width 0.12s linear;}
+.prog-fill.w{background:var(--amber);}
+.prog-fill.d{background:var(--red);}
+.sent-box{background:var(--s2);border-radius:12px;padding:14px 16px;font-size:17px;line-height:1.75;transition:filter 0.3s,opacity 0.3s;}
+.sent-box.blr{filter:blur(9px);opacity:0.4;user-select:none;}
+.play-btn{width:100%;padding:14px;border-radius:13px;border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;transition:all 0.15s;}
+.play-btn:active{transform:scale(0.97);}
+.play-btn:disabled{opacity:0.35;cursor:not-allowed;}
+.play-btn.playing{border-color:rgba(255,214,10,0.3);background:var(--amber-bg);color:var(--amber);}
+.mic-wrap{display:flex;align-items:center;gap:14px;}
+.mic-btn{width:62px;height:62px;border-radius:50%;border:2px solid var(--s4);background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;}
+.mic-btn.ready{border-color:var(--blue);}
+.mic-btn.rec{border-color:var(--red);background:var(--red-bg);animation:mpulse 1.3s ease infinite;}
+.mic-btn:disabled{opacity:0.35;cursor:not-allowed;}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,69,58,0.25)}50%{box-shadow:0 0 0 14px rgba(255,69,58,0)}}
+.mic-info{flex:1;min-width:0;}
+.mic-st{font-size:13px;font-weight:500;color:var(--t2);margin-bottom:5px;}
+.mic-st.act{color:var(--red);}
+.wave{display:flex;align-items:center;gap:3px;height:26px;}
+.wb{width:3px;background:var(--s4);border-radius:2px;height:4px;transition:height 0.1s;}
+.wb.on{background:var(--green);}
+.rec-t{font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums;flex-shrink:0;}
+.trans{background:var(--s2);border-radius:11px;padding:12px 14px;font-size:14px;line-height:1.65;color:var(--t3);margin-top:10px;min-height:42px;font-style:italic;}
+.trans.has{color:var(--t1);font-style:normal;}
+.cmp-row{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;}
+.cw{padding:3px 8px;border-radius:7px;font-size:14px;font-weight:500;}
+.cw.ok{background:var(--green-bg);color:var(--green);}
+.cw.miss{background:var(--red-bg);color:var(--red);text-decoration:line-through;}
+.cw.extra{background:var(--amber-bg);color:var(--amber);}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.sc{background:var(--s2);border-radius:12px;padding:12px;text-align:center;}
+.sc-v{font-size:22px;font-weight:700;}
+.sc-v.good{color:var(--green);}
+.sc-v.ok{color:var(--amber);}
+.sc-v.bad{color:var(--red);}
+.sc-l{font-size:10px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;}
+.fb-box{background:var(--s2);border-radius:12px;padding:14px;margin-top:8px;}
+.fb-loading{display:flex;align-items:center;gap:10px;color:var(--t2);font-size:13px;}
+.spinner{width:18px;height:18px;border:2px solid var(--s4);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fb-text{font-size:14px;line-height:1.75;color:var(--t1);}
+.next-btn{width:100%;padding:15px;margin-top:12px;border-radius:14px;border:none;background:var(--blue);color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.next-btn:active{transform:scale(0.97);opacity:0.85;}
+.mi{background:var(--s1);border:0.5px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px;}
+.mi-sent{font-size:15px;line-height:1.6;margin-bottom:8px;}
+.mi-meta{display:flex;justify-content:space-between;align-items:center;}
+.mi-cnt{font-size:11px;color:var(--t3);}
+.retry-btn{font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-bg);border:none;border-radius:8px;padding:5px 12px;cursor:pointer;}
+.empty{text-align:center;padding:48px 20px;color:var(--t3);font-size:15px;line-height:1.7;}
+.key-inp{width:100%;background:var(--s2);border:1px solid var(--bd2);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--t1);font-family:monospace;margin-top:8px;outline:none;}
+.key-inp:focus{border-color:var(--blue);}
+.save-btn{width:100%;padding:14px;border-radius:13px;border:none;background:var(--blue);color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;}
+.save-btn:active{opacity:0.8;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--bd);}
+.set-row:last-child{border:none;}
+.set-lbl{font-size:15px;}
+.set-sub{font-size:12px;color:var(--t3);margin-top:2px;}
+.bnav{display:flex;background:rgba(8,8,16,0.9);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:0.5px solid var(--bd);flex-shrink:0;}
+.nav-it{flex:1;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--t3);font-size:10px;font-weight:500;cursor:pointer;transition:color 0.18s;}
+.nav-it.on{color:var(--blue);}
+.nav-ic{width:22px;height:22px;}
+button{touch-action:manipulation;}
+</style>
+</head>
+<body>
+
+<!-- ===== PRACTICE ===== -->
+<div class="page active" id="pg-practice">
+  <div class="safe-top"></div>
+  <div class="hdr">
+    <div class="hdr-title">PTE 复述句子</div>
+    <div class="hdr-right" id="cost-disp"></div>
+  </div>
+  <div class="scroll" id="sc-practice">
+
+    <!-- difficulty -->
+    <div class="row3">
+      <button class="seg-btn" id="d-easy" onclick="setDiff('easy')">初级</button>
+      <button class="seg-btn on-blue" id="d-medium" onclick="setDiff('medium')">中级</button>
+      <button class="seg-btn" id="d-hard" onclick="setDiff('hard')">高级</button>
+    </div>
+
+    <!-- listen card -->
+    <div class="card">
+      <div class="pill pill-blue" id="phase-pill"><div class="dot"></div> 准备聆听</div>
+      <div class="card-lbl">听后立即复述 — 尽量逐字重复</div>
+      <div class="sent-box blr" id="sent-box">按播放键听句子</div>
+
+      <!-- speed -->
+      <div class="row3" style="margin-top:12px;margin-bottom:0;">
+        <button class="seg-btn" id="sp-75" onclick="setSpeed(0.75)">0.75×</button>
+        <button class="seg-btn on-green" id="sp-100" onclick="setSpeed(1.0)">1.0×</button>
+        <button class="seg-btn" id="sp-125" onclick="setSpeed(1.25)">1.25×</button>
+      </div>
+
+      <!-- accent -->
+      <div class="row3" style="margin-top:8px;margin-bottom:0;">
+        <button class="seg-btn on-purple" id="ac-AU" onclick="setAccent('AU')">🇦🇺 澳洲</button>
+        <button class="seg-btn" id="ac-UK" onclick="setAccent('UK')">🇬🇧 英国</button>
+        <button class="seg-btn" id="ac-US" onclick="setAccent('US')">🇺🇸 美国</button>
+        <button class="seg-btn" id="ac-IN" onclick="setAccent('IN')">🇮🇳 印度</button>
+      </div>
+
+      <button class="play-btn" id="play-btn" onclick="playSentence()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        播放音频
+      </button>
+      <div class="prog-track"><div class="prog-fill" id="play-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- record card -->
+    <div class="card">
+      <div class="card-lbl">你的复述</div>
+      <div class="mic-wrap">
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()" disabled>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <div class="mic-info">
+          <div class="mic-st" id="mic-st">先播放音频</div>
+          <div class="wave" id="wave"></div>
+        </div>
+        <div class="rec-t" id="rec-t"></div>
+      </div>
+      <div class="trans" id="trans">录音后您的复述将出现在这里...</div>
+    </div>
+
+    <!-- result (hidden) -->
+    <div id="result" style="display:none;">
+      <div class="card">
+        <div class="card-lbl">词语对比</div>
+        <div class="cmp-row" id="cmp-row"></div>
+        <div style="display:flex;gap:12px;margin-top:4px;">
+          <span style="font-size:11px;color:var(--green);">● 正确</span>
+          <span style="font-size:11px;color:var(--red);">● 遗漏</span>
+          <span style="font-size:11px;color:var(--amber);">● 多余</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">得分</div>
+        <div class="sc-grid">
+          <div class="sc"><div class="sc-v" id="sc-acc">—</div><div class="sc-l">准确率</div></div>
+          <div class="sc"><div class="sc-v" id="sc-words">—</div><div class="sc-l">词语匹配</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">AI 发音建议</div>
+        <div class="fb-box">
+          <div class="fb-loading" id="fb-loading"><div class="spinner"></div>正在分析...</div>
+          <div class="fb-text" id="fb-text" style="display:none;"></div>
+        </div>
+      </div>
+      <button class="next-btn" onclick="nextSentence()">下一句 →</button>
+    </div>
+
+  </div>
+  <div class="bnav">
+    <button class="nav-it on" id="nav-practice" onclick="showPage('practice')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      练习
+    </button>
+    <button class="nav-it" id="nav-mistakes" onclick="showPage('mistakes')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      错题本
+    </button>
+    <button class="nav-it" id="nav-settings" onclick="showPage('settings')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      设置
+    </button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<!-- ===== MISTAKES ===== -->
+<div class="page" id="pg-mistakes">
+  <div class="safe-top"></div>
+  <div class="hdr">
+    <div class="hdr-title">错题本</div>
+    <button style="font-size:12px;color:var(--red);background:none;border:none;cursor:pointer;padding:6px;" onclick="clearMistakes()">清空</button>
+  </div>
+  <div class="scroll" id="mistakes-list">
+    <div class="empty" id="mi-empty">暂无错题<br><span style="font-size:13px;">准确率低于70%的句子<br>会自动记录在这里</span></div>
+  </div>
+  <div class="bnav">
+    <button class="nav-it" id="nav-practice2" onclick="showPage('practice')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      练习
+    </button>
+    <button class="nav-it on" id="nav-mistakes2" onclick="showPage('mistakes')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      错题本
+    </button>
+    <button class="nav-it" id="nav-settings2" onclick="showPage('settings')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      设置
+    </button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="page" id="pg-settings">
+  <div class="safe-top"></div>
+  <div class="hdr"><div class="hdr-title">设置</div></div>
+  <div class="scroll">
+    <div class="card">
+      <div class="card-lbl">🔊 语音 Key — Google Cloud TTS</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:8px;">
+        播放真人声音。来自 Google Cloud Console → Credentials（API key 1）。
+      </div>
+      <input class="key-inp" type="password" id="key-tts" placeholder="AIzaSy..." autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="card">
+      <div class="card-lbl">🤖 Gemini Key — AI Studio</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:8px;">
+        AI 发音分析。来自 aistudio.google.com/apikey。
+      </div>
+      <input class="key-inp" type="password" id="key-gemini" placeholder="AIzaSy..." autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="save-btn" onclick="saveKey()" style="margin-top:14px;">保存</button>
+      <div style="font-size:12px;color:var(--t3);margin-top:8px;text-align:center;" id="key-st"></div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">功能说明</div>
+      <div class="set-row">
+        <div><div class="set-lbl">真人语音</div><div class="set-sub">Google WaveNet 澳/英/美/印</div></div>
+        <div style="font-size:12px;color:var(--green);">✓</div>
+      </div>
+      <div class="set-row">
+        <div><div class="set-lbl">AI 发音分析</div><div class="set-sub">Gemini 1.5 Flash 中文反馈</div></div>
+        <div style="font-size:12px;color:var(--green);">✓</div>
+      </div>
+      <div class="set-row">
+        <div><div class="set-lbl">错题自动记录</div><div class="set-sub">准确率 &lt;70% 自动存档</div></div>
+        <div style="font-size:12px;color:var(--green);">✓</div>
+      </div>
+      <div class="set-row">
+        <div><div class="set-lbl">预计费用</div><div class="set-sub">每句约 A$0.01–0.02</div></div>
+        <div style="font-size:12px;color:var(--amber);">免费额度内</div>
+      </div>
+    </div>
+    <div class="card" style="font-size:13px;color:var(--t2);line-height:1.8;">
+      <div class="card-lbl">安装到主屏幕</div>
+      Safari → 分享按钮 → 添加到主屏幕<br>即可像 App 一样全屏使用
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="nav-it" id="nav-practice3" onclick="showPage('practice')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      练习
+    </button>
+    <button class="nav-it" id="nav-mistakes3" onclick="showPage('mistakes')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      错题本
+    </button>
+    <button class="nav-it on" id="nav-settings3" onclick="showPage('settings')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      设置
+    </button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const DATA = {
+  easy:[
+    "Please close the door when you leave the room.",
+    "The library opens at nine o'clock in the morning.",
+    "She decided to take a walk in the park after dinner.",
+    "The students finished their homework before the deadline.",
+    "He always drinks coffee before starting his work.",
+    "The bus arrives every fifteen minutes on weekdays.",
+    "Could you please pass me the salt and pepper?",
+    "We need to buy some groceries before the shops close.",
+    "The children played outside until it started to rain.",
+    "She called her friend to cancel their lunch plans."
+  ],
+  medium:[
+    "The conference has been postponed until further notice due to unforeseen circumstances.",
+    "Participants are required to register online at least two weeks prior to the event.",
+    "The researchers published their findings in a peer-reviewed journal last month.",
+    "She received a scholarship to study abroad for the following academic year.",
+    "The new policy will come into effect from the beginning of next quarter.",
+    "Students are encouraged to consult with their supervisors before submitting final drafts.",
+    "The committee will review all applications and notify successful candidates within ten days.",
+    "Regular physical activity has been shown to significantly reduce the risk of chronic disease.",
+    "The university offers a range of support services for students experiencing academic difficulties.",
+    "Applications submitted after the closing date will not be considered under any circumstances."
+  ],
+  hard:[
+    "The implications of the study's methodology have been contested by several independent researchers.",
+    "Despite significant advancements in medical technology, access to healthcare remains inequitable across socioeconomic groups.",
+    "The committee's recommendations were adopted with minor modifications following extensive deliberation among stakeholders.",
+    "Longitudinal data collected over a twenty-year period suggests a statistically significant correlation between the two variables.",
+    "The philosopher argued that objective moral truths exist independently of human consciousness and cultural convention.",
+    "Contemporary approaches to urban planning increasingly prioritise sustainable development and community engagement over economic growth.",
+    "The proliferation of digital platforms has fundamentally altered the dynamics of political communication and public discourse.",
+    "Neuroscientific evidence suggests that bilingualism may confer cognitive advantages that persist well into old age.",
+    "The arbitration panel concluded that the contractual obligations had been fulfilled in accordance with the agreed specifications.",
+    "Regulatory frameworks governing artificial intelligence must balance innovation with accountability to prevent potential societal harms."
+  ]
+};
+
+const VOICES = { AU:'en-AU-Wavenet-B', UK:'en-GB-Wavenet-B', US:'en-US-Wavenet-D', IN:'en-IN-Wavenet-B' };
+const LANGS  = { AU:'en-AU', UK:'en-GB', US:'en-US', IN:'en-IN' };
+
+// ── STATE ─────────────────────────────────────────────
+const S = {
+  diff:'medium', pool:[], idx:0,
+  speed:1.0, accent:'AU',
+  apiKey: localStorage.getItem('gcKey')||'',
+  geminiKey: localStorage.getItem('geminiKey')||'',
+  recording:false, recog:null, recogFinal:'', userText:'',
+  recTimer:null, waveInt:null, curAudio:null,
+  mistakes: JSON.parse(localStorage.getItem('pteMistakes')||'[]'),
+  cost: parseFloat(localStorage.getItem('pteCost')||'0')
+};
+
+// ── NAV ───────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  // reset all nav highlights
+  document.querySelectorAll('.nav-it').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll(`[id^="nav-${name}"]`).forEach(b=>b.classList.add('on'));
+  if(name==='mistakes') renderMistakes();
+  if(name==='settings'){
+    if(S.apiKey) document.getElementById('key-tts').value=S.apiKey;
+    if(S.geminiKey) document.getElementById('key-gemini').value=S.geminiKey;
+  }
+}
+
+// ── SETTINGS ──────────────────────────────────────────
+function saveKey(){
+  const tts=document.getElementById('key-tts').value.trim();
+  const gem=document.getElementById('key-gemini').value.trim();
+  const st=document.getElementById('key-st');
+  if(tts && !tts.startsWith('AIza')){ st.textContent='⚠️ 语音 Key 格式不正确'; return; }
+  if(gem && !gem.startsWith('AIza')){ st.textContent='⚠️ Gemini Key 格式不正确'; return; }
+  if(!tts && !gem){ st.textContent='⚠️ 请至少填写一个 Key'; return; }
+  if(tts){ S.apiKey=tts; localStorage.setItem('gcKey',tts); }
+  if(gem){ S.geminiKey=gem; localStorage.setItem('geminiKey',gem); }
+  st.textContent='✅ 已保存';
+  updateCostDisplay();
+  setTimeout(()=>st.textContent='',2500);
+}
+
+// ── DIFF / SPEED / ACCENT ─────────────────────────────
+function setDiff(d){
+  S.diff=d;
+  ['easy','medium','hard'].forEach(x=>document.getElementById('d-'+x).className='seg-btn'+(x===d?' on-blue':''));
+  initPool(); showSentence();
+}
+function setSpeed(s){
+  S.speed=s;
+  [75,100,125].forEach(x=>document.getElementById('sp-'+x).className='seg-btn'+(x===s*100?' on-green':''));
+}
+function setAccent(a){
+  S.accent=a;
+  ['AU','UK','US','IN'].forEach(x=>document.getElementById('ac-'+x).className='seg-btn'+(x===a?' on-purple':''));
+}
+
+// ── SENTENCES ─────────────────────────────────────────
+function initPool(){ S.pool=[...DATA[S.diff]].sort(()=>Math.random()-.5); S.idx=0; }
+
+function showSentence(){
+  stopAll();
+  S.userText='';
+  document.getElementById('sent-box').textContent=S.pool[S.idx];
+  document.getElementById('sent-box').classList.add('blr');
+  document.getElementById('result').style.display='none';
+  document.getElementById('trans').textContent='录音后您的复述将出现在这里...';
+  document.getElementById('trans').classList.remove('has');
+  setPill('blue','准备聆听');
+  const pb=document.getElementById('play-btn');
+  pb.disabled=false; pb.className='play-btn';
+  pb.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> 播放音频';
+  const mb=document.getElementById('mic-btn');
+  mb.disabled=true; mb.className='mic-btn';
+  document.getElementById('mic-st').textContent='先播放音频';
+  document.getElementById('mic-st').classList.remove('act');
+  document.getElementById('play-fill').style.width='0%';
+  document.getElementById('play-fill').className='prog-fill';
+  document.getElementById('rec-t').textContent='';
+  stopWave();
+  document.getElementById('sc-practice').scrollTop=0;
+}
+
+function nextSentence(){ S.idx=(S.idx+1)%S.pool.length; showSentence(); }
+
+// ── TTS ───────────────────────────────────────────────
+async function playSentence(){
+  if(!S.apiKey){ alert('请先在设置中填写语音 Key（Google Cloud TTS）'); showPage('settings'); return; }
+  const sent=S.pool[S.idx];
+  const pb=document.getElementById('play-btn');
+  pb.disabled=true; pb.className='play-btn playing';
+  pb.innerHTML='<div style="width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;"></div> 加载声音...';
+  setPill('amber','正在播放...');
+
+  // progress bar animation
+  const dur=Math.max(2000, sent.split(' ').length*380/S.speed);
+  let prog=0;
+  const fill=document.getElementById('play-fill');
+  const pi=setInterval(()=>{
+    prog=Math.min(prog+100/(dur/100),100);
+    fill.style.width=prog+'%';
+    fill.className='prog-fill'+(prog>75?' d':prog>50?' w':'');
+    if(prog>=100) clearInterval(pi);
+  },100);
+
+  try{
+    const res=await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${S.apiKey}`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        input:{text:sent},
+        voice:{languageCode:LANGS[S.accent],name:VOICES[S.accent]},
+        audioConfig:{audioEncoding:'MP3',speakingRate:S.speed,pitch:0}
+      })
+    });
+    if(!res.ok) throw new Error(await res.text());
+    const d=await res.json();
+    const audio=new Audio('data:audio/mp3;base64,'+d.audioContent);
+    S.curAudio=audio;
+    pb.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 播放中...';
+    audio.onended=()=>{ clearInterval(pi); onPlayEnd(); };
+    audio.onerror=()=>{ clearInterval(pi); fallbackTTS(sent, pi); };
+    audio.play();
+    addCost(sent.length*0.000004);
+  } catch(e){
+    clearInterval(pi);
+    fallbackTTS(sent, null);
+  }
+}
+
+function fallbackTTS(sent, pi){
+  if(pi) clearInterval(pi);
+  const utt=new SpeechSynthesisUtterance(sent);
+  utt.lang=LANGS[S.accent]; utt.rate=S.speed;
+  utt.onend=onPlayEnd; utt.onerror=onPlayEnd;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utt);
+  const pb=document.getElementById('play-btn');
+  pb.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 播放中 (系统声音)';
+}
+
+function onPlayEnd(){
+  document.getElementById('sent-box').classList.remove('blr');
+  setPill('green','请立即复述');
+  const pb=document.getElementById('play-btn');
+  pb.disabled=false; pb.className='play-btn';
+  pb.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> 再听一遍';
+  // 重置录音区，让用户可以重新录
+  S.userText='';
+  document.getElementById('result').style.display='none';
+  document.getElementById('trans').textContent='录音后您的复述将出现在这里...';
+  document.getElementById('trans').classList.remove('has');
+  document.getElementById('rec-t').textContent='';
+  stopWave();
+  const mb=document.getElementById('mic-btn');
+  mb.disabled=false; mb.className='mic-btn ready';
+  document.getElementById('mic-st').textContent='点击麦克风开始录音';
+  document.getElementById('mic-st').classList.remove('act');
+}
+
+// ── RECORDING ─────────────────────────────────────────
+function toggleMic(){ if(!S.recording) startRec(); else stopRec(); }
+
+function startRec(){
+  S.recording=true;
+  S.userText='';
+  S.recogFinal='';
+
+  // Reset UI
+  const trans=document.getElementById('trans');
+  trans.textContent='...聆听中...';
+  trans.classList.remove('has');
+  document.getElementById('rec-t').textContent='';
+  document.getElementById('mic-btn').className='mic-btn rec';
+  const st=document.getElementById('mic-st');
+  st.textContent='录音中...请复述句子'; st.classList.add('act');
+  startWave();
+
+  // Timer
+  let t=0;
+  clearInterval(S.recTimer);
+  S.recTimer=setInterval(()=>{ t++; document.getElementById('rec-t').textContent=fmt(t); if(t>=15) stopRec(); },1000);
+
+  // Kill any existing recognition completely
+  if(S.recog){
+    S.recog.onresult=null; S.recog.onerror=null; S.recog.onend=null;
+    try{ S.recog.abort(); }catch(e){}
+    S.recog=null;
+  }
+
+  // Create brand new recognition instance
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ trans.textContent='请使用 Safari 以支持语音识别'; return; }
+
+  const r=new SR();
+  r.continuous=true;
+  r.interimResults=true;
+  r.lang='en-AU';
+  S.recog=r;
+
+  r.onresult=e=>{
+    let finalChunk='', interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) finalChunk+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    S.recogFinal+=finalChunk;
+    const txt=(S.recogFinal+interim).trim();
+    trans.textContent=txt||'...聆听中...';
+    trans.classList.toggle('has',!!txt);
+    S.userText=S.recogFinal.trim();
+  };
+
+  r.onerror=err=>{
+    // 'no-speech' is normal — just continue
+    if(err.error!=='no-speech') console.log('Speech error:',err.error);
+  };
+
+  r.onend=()=>{
+    // Auto-restart if still recording (Safari sometimes stops recognition mid-session)
+    if(S.recording && S.recog===r){
+      try{ r.start(); }catch(e){}
+    }
+  };
+
+  try{ r.start(); }catch(e){ console.log('Recognition start error:',e); }
+}
+
+function stopRec(){
+  if(!S.recording) return;
+  S.recording=false;
+  clearInterval(S.recTimer);
+  stopWave();
+
+  // Capture final text before stopping
+  const finalText=S.userText||document.getElementById('trans').textContent||'';
+  S.userText=finalText==='...聆听中...'?'':finalText;
+
+  // Stop recognition
+  if(S.recog){
+    S.recog.onend=null; // prevent auto-restart
+    try{ S.recog.stop(); }catch(e){}
+    S.recog=null;
+  }
+
+  document.getElementById('mic-btn').className='mic-btn';
+  document.getElementById('mic-btn').disabled=true;
+  const st=document.getElementById('mic-st');
+  st.textContent='录音完成 ✓'; st.classList.remove('act');
+  setPill('purple','分析中...');
+
+  // Show result after a brief pause to allow final recognition results
+  setTimeout(showResult, 800);
+}
+
+// ── RESULTS ───────────────────────────────────────────
+function showResult(){
+  const orig=S.pool[S.idx];
+  const spoken=S.userText||document.getElementById('trans').textContent||'';
+  const ow=orig.toLowerCase().replace(/[^a-z\s']/g,'').split(/\s+/).filter(Boolean);
+  const sw=spoken.toLowerCase().replace(/[^a-z\s']/g,'').split(/\s+/).filter(Boolean);
+
+  let matched=0;
+  const cmp=document.getElementById('cmp-row');
+  cmp.innerHTML=ow.map(w=>{
+    const ok=sw.some(s=>s===w||lev(s,w)<=1);
+    if(ok) matched++;
+    return `<span class="cw ${ok?'ok':'miss'}">${w}</span>`;
+  }).join('');
+  sw.forEach(w=>{ if(!ow.some(o=>o===w||lev(o,w)<=1)) cmp.innerHTML+=`<span class="cw extra">${w}</span>`; });
+
+  const acc=Math.round(matched/ow.length*100);
+  function cls(n){ return n>=80?'good':n>=50?'ok':'bad'; }
+  setSc('sc-acc',acc+'%',cls(acc));
+  setSc('sc-words',matched+'/'+ow.length,cls(matched/ow.length*100));
+
+  document.getElementById('result').style.display='block';
+  setPill('purple','查看结果');
+  if(acc<70) saveMistake(orig,acc);
+  getAIFeedback(orig,spoken,acc);
+  setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'nearest'}),150);
+}
+
+function setSc(id,val,cls){ const e=document.getElementById(id); e.textContent=val; e.className='sc-v '+cls; }
+
+// ── GEMINI FEEDBACK ───────────────────────────────────
+async function getAIFeedback(orig,spoken,acc){
+  document.getElementById('fb-loading').style.display='flex';
+  document.getElementById('fb-text').style.display='none';
+  if(!S.geminiKey){ showFB('请在设置中填写 Gemini Key（来自 aistudio.google.com/apikey）以获取 AI 发音建议。'); return; }
+  try{
+    const prompt=`你是专业的PTE英语口语教练，专门帮助中国学生备考PTE Academic考试。
+
+原句：${orig}
+学生复述：${spoken||'（未能识别，可能完全没有说出）'}
+词语准确率：${acc}%
+
+请用中文给出完整详细的分析，分以下四个部分：
+
+【词语分析】
+对比原句，逐一指出：哪些词说对了，哪些词漏掉了，哪些词说错了或被替换了。
+
+【发音建议】
+针对遗漏或错误的词，给出具体可操作的发音技巧，例如：
+- 具体音素的发音方法（如 /θ/ 舌尖放上齿，/v/ 上齿咬下唇等）
+- 连读规则（如辅音+元音连读）
+- 弱读和重音（如虚词 the/a/of 通常弱读）
+
+【记忆技巧】
+如何用节奏、分组或联想来记住这个句子的结构。
+
+【总结鼓励】
+一到两句鼓励的话。
+
+请完整回答所有部分，每部分至少两到三句话。`;
+
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,{
+      method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':S.geminiKey},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1000,temperature:0.7}})
+    });
+    if(!res.ok) throw new Error(await res.text());
+    const d=await res.json();
+    showFB(d.candidates?.[0]?.content?.parts?.[0]?.text||'无法获取反馈');
+    addCost(0.0003);
+  } catch(e){
+    showFB('AI 分析暂时不可用。请检查 API Key 是否正确，以及 Gemini API 是否已启用。\n\n错误：'+e.message);
+  }
+}
+
+function showFB(text){
+  document.getElementById('fb-loading').style.display='none';
+  const el=document.getElementById('fb-text');
+  el.style.display='block';
+  // render **bold** markdown
+  el.innerHTML=text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--blue)">$1</strong>')
+    .replace(/\n/g,'<br>');
+}
+
+// ── MISTAKES ──────────────────────────────────────────
+function saveMistake(sent,acc){
+  const ex=S.mistakes.find(m=>m.s===sent);
+  if(ex){ ex.count++; ex.acc=acc; }
+  else S.mistakes.push({s:sent,count:1,acc});
+  S.mistakes.sort((a,b)=>b.count-a.count);
+  localStorage.setItem('pteMistakes',JSON.stringify(S.mistakes));
+}
+
+function renderMistakes(){
+  const list=document.getElementById('mistakes-list');
+  document.getElementById('mi-empty').style.display=S.mistakes.length?'none':'block';
+  list.querySelectorAll('.mi').forEach(e=>e.remove());
+  S.mistakes.forEach((m,i)=>{
+    const div=document.createElement('div'); div.className='mi';
+    div.innerHTML=`<div class="mi-sent">${m.s}</div>
+      <div class="mi-meta">
+        <span class="mi-cnt">出错 ${m.count} 次 &nbsp;·&nbsp; 上次 ${m.acc}%</span>
+        <button class="retry-btn" onclick="retryMistake(${i})">再练</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryMistake(i){
+  const sent=S.mistakes[i].s;
+  S.pool=[sent,...S.pool.filter(s=>s!==sent)]; S.idx=0;
+  showPage('practice'); showSentence();
+}
+
+function clearMistakes(){
+  if(!confirm('确定清空所有错题记录？')) return;
+  S.mistakes=[]; localStorage.removeItem('pteMistakes'); renderMistakes();
+}
+
+// ── WAVEFORM ──────────────────────────────────────────
+function initWave(){
+  const el=document.getElementById('wave'); el.innerHTML='';
+  for(let i=0;i<16;i++){ const b=document.createElement('div'); b.className='wb'; el.appendChild(b); }
+}
+function startWave(){
+  stopWave();
+  S.waveInt=setInterval(()=>{
+    document.querySelectorAll('#wave .wb').forEach(b=>{ b.classList.add('on'); b.style.height=(4+Math.random()*20)+'px'; });
+  },130);
+}
+function stopWave(){
+  if(S.waveInt){ clearInterval(S.waveInt); S.waveInt=null; }
+  document.querySelectorAll('#wave .wb').forEach(b=>{ b.classList.remove('on'); b.style.height='4px'; });
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function setPill(color,text){
+  const el=document.getElementById('phase-pill');
+  el.className='pill pill-'+color;
+  const pulse=color==='green'||color==='amber'?' pulse':'';
+  el.innerHTML=`<div class="dot${pulse}"></div> ${text}`;
+}
+function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+function lev(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function stopAll(){
+  if(S.curAudio){ try{ S.curAudio.pause(); }catch(e){} }
+  window.speechSynthesis?.cancel();
+  if(S.recog){ try{ S.recog.stop(); }catch(e){} }
+  clearInterval(S.recTimer);
+  stopWave();
+  S.recording=false;
+}
+function updateCostDisplay(){
+  const aud=S.cost*1.55;
+  const ttsOk=S.apiKey?'🔊✅':'🔊—';
+  const aiOk=S.geminiKey?'🤖✅':'🤖—';
+  document.getElementById('cost-disp').textContent=S.cost>0?`约 A$${aud.toFixed(3)}`:`${ttsOk} ${aiOk}`;
+}
+function addCost(amt){
+  S.cost+=amt; localStorage.setItem('pteCost',S.cost.toFixed(5));
+  updateCostDisplay();
+}
+
+// prevent body bounce scroll on iOS
+document.querySelectorAll('.scroll').forEach(el=>el.addEventListener('touchmove',e=>e.stopPropagation(),{passive:true}));
+document.body.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+
+// ── INIT ──────────────────────────────────────────────
+initWave();
+initPool();
+showSentence();
+updateCostDisplay();
+</script>
+</body>
+</html>
