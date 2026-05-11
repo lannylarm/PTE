@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PTE 复述练习">
+<meta name="theme-color" content="#080810">
+<title>PTE 复述句子</title>
+<style>
+:root {
+  --bg:#080810;--s1:#13131f;--s2:#1e1e2e;--s3:#2a2a3e;--s4:#363650;
+  --t1:#e8e8f0;--t2:rgba(232,232,240,0.55);--t3:rgba(232,232,240,0.28);
+  --bd:rgba(232,232,240,0.08);--bd2:rgba(232,232,240,0.14);
+  --blue:#5b8dee;--blue-bg:rgba(91,141,238,0.13);--blue-bd:rgba(91,141,238,0.28);
+  --green:#30d158;--green-bg:rgba(48,209,88,0.12);--green-bd:rgba(48,209,88,0.28);
+  --red:#ff453a;--red-bg:rgba(255,69,58,0.12);
+  --amber:#ffd60a;--amber-bg:rgba(255,214,10,0.12);
+  --purple:#bf5af2;--purple-bg:rgba(191,90,242,0.12);
+  --safe-top:env(safe-area-inset-top,44px);
+  --safe-bot:env(safe-area-inset-bottom,34px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;background:var(--bg);color:var(--t1);display:flex;flex-direction:column;}
+.page{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.page.active{opacity:1;pointer-events:all;}
+.safe-top{height:var(--safe-top);flex-shrink:0;}
+.safe-bot{height:var(--safe-bot);flex-shrink:0;}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 6px;flex-shrink:0;}
+.hdr-title{font-size:20px;font-weight:700;letter-spacing:-0.4px;}
+.hdr-right{font-size:12px;color:var(--t3);}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:12px 18px 20px;}
+.card{background:var(--s1);border:0.5px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:12px;}
+.card-lbl{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:10px;}
+.pill-blue{background:var(--blue-bg);color:var(--blue);}
+.pill-green{background:var(--green-bg);color:var(--green);}
+.pill-amber{background:var(--amber-bg);color:var(--amber);}
+.pill-red{background:var(--red-bg);color:var(--red);}
+.pill-purple{background:var(--purple-bg);color:var(--purple);}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.dot.pulse{animation:blink 1s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+.row3{display:flex;gap:7px;margin-bottom:10px;}
+.seg-btn{flex:1;padding:8px 4px;font-size:12px;font-weight:600;border:1px solid var(--bd2);border-radius:10px;background:none;color:var(--t2);cursor:pointer;transition:all 0.18s;text-align:center;}
+.seg-btn.on-blue{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
+.seg-btn.on-green{border-color:var(--green);color:var(--green);background:var(--green-bg);}
+.seg-btn.on-purple{border-color:var(--purple);color:var(--purple);background:var(--purple-bg);}
+.prog-track{height:3px;border-radius:2px;background:var(--s3);margin-top:10px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;background:var(--blue);transition:width 0.12s linear;}
+.prog-fill.w{background:var(--amber);}
+.prog-fill.d{background:var(--red);}
+.sent-box{background:var(--s2);border-radius:12px;padding:14px 16px;font-size:17px;line-height:1.75;transition:filter 0.3s,opacity 0.3s;}
+.sent-box.blr{filter:blur(9px);opacity:0.4;user-select:none;}
+.play-btn{width:100%;padding:14px;border-radius:13px;border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;transition:all 0.15s;}
+.play-btn:active{transform:scale(0.97);}
+.play-btn:disabled{opacity:0.35;cursor:not-allowed;}
+.play-btn.playing{border-color:rgba(255,214,10,0.3);background:var(--amber-bg);color:var(--amber);}
+.mic-wrap{display:flex;align-items:center;gap:14px;}
+.mic-btn{width:62px;height:62px;border-radius:50%;border:2px solid var(--s4);background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;}
+.mic-btn.ready{border-color:var(--blue);}
+.mic-btn.rec{border-color:var(--red);background:var(--red-bg);animation:mpulse 1.3s ease infinite;}
+.mic-btn:disabled{opacity:0.35;cursor:not-allowed;}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,69,58,0.25)}50%{box-shadow:0 0 0 14px rgba(255,69,58,0)}}
+.mic-info{flex:1;min-width:0;}
+.mic-st{font-size:13px;font-weight:500;color:var(--t2);margin-bottom:5px;}
+.mic-st.act{color:var(--red);}
+.wave{display:flex;align-items:center;gap:3px;height:26px;}
+.wb{width:3px;background:var(--s4);border-radius:2px;height:4px;transition:height 0.1s;}
+.wb.on{background:var(--green);}
+.rec-t{font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums;flex-shrink:0;}
+.trans{background:var(--s2);border-radius:11px;padding:12px 14px;font-size:14px;line-height:1.65;color:var(--t3);margin-top:10px;min-height:42px;font-style:italic;}
+.trans.has{color:var(--t1);font-style:normal;}
+.cmp-row{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;}
+.cw{padding:3px 8px;border-radius:7px;font-size:14px;font-weight:500;}
+.cw.ok{background:var(--green-bg);color:var(--green);}
+.cw.miss{background:var(--red-bg);color:var(--red);text-decoration:line-through;}
+.cw.func{background:var(--amber-bg);color:var(--amber);text-decoration:line-through;opacity:0.7;}
+.cw.extra{background:var(--s3);color:var(--t3);}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.sc{background:var(--s2);border-radius:12px;padding:12px;text-align:center;}
+.sc-v{font-size:22px;font-weight:700;}
+.sc-v.good{color:var(--green);}
+.sc-v.ok{color:var(--amber);}
+.sc-v.bad{color:var(--red);}
+.sc-l{font-size:10px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;}
+.next-btn{width:100%;padding:15px;margin-top:12px;border-radius:14px;border:none;background:var(--blue);color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.next-btn:active{transform:scale(0.97);opacity:0.85;}
+.mi{background:var(--s1);border:0.5px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px;}
+.mi-sent{font-size:15px;line-height:1.6;margin-bottom:8px;}
+.mi-meta{display:flex;justify-content:space-between;align-items:center;}
+.mi-cnt{font-size:11px;color:var(--t3);}
+.retry-btn{font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-bg);border:none;border-radius:8px;padding:5px 12px;cursor:pointer;}
+.empty{text-align:center;padding:48px 20px;color:var(--t3);font-size:15px;line-height:1.7;}
+.key-inp{width:100%;background:var(--s2);border:1px solid var(--bd2);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--t1);font-family:monospace;margin-top:8px;outline:none;}
+.key-inp:focus{border-color:var(--blue);}
+.save-btn{width:100%;padding:14px;border-radius:13px;border:none;background:var(--blue);color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;}
+.save-btn:active{opacity:0.8;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--bd);}
+.set-row:last-child{border:none;}
+.set-lbl{font-size:15px;}
+.set-sub{font-size:12px;color:var(--t3);margin-top:2px;}
+.bnav{display:flex;background:rgba(8,8,16,0.9);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:0.5px solid var(--bd);flex-shrink:0;}
+.nav-it{flex:1;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--t3);font-size:10px;font-weight:500;cursor:pointer;transition:color 0.18s;}
+.nav-it.on{color:var(--blue);}
+.nav-ic{width:22px;height:22px;}
+button{touch-action:manipulation;}
+</style>
+</head>
+<body>
+
+<!-- ===== PRACTICE ===== -->
+<div class="page active" id="pg-practice">
+  <div class="safe-top"></div>
+  <div class="hdr">
+    <div class="hdr-title">PTE 复述句子</div>
+    <div class="hdr-right" id="cost-disp"></div>
+  </div>
+  <div class="scroll" id="sc-practice">
+
+    <!-- difficulty -->
+    <div class="row3">
+      <button class="seg-btn" id="d-easy" onclick="setDiff('easy')">初级</button>
+      <button class="seg-btn on-blue" id="d-medium" onclick="setDiff('medium')">中级</button>
+      <button class="seg-btn" id="d-hard" onclick="setDiff('hard')">高级</button>
+    </div>
+
+    <!-- listen card -->
+    <div class="card">
+      <div class="pill pill-blue" id="phase-pill"><div class="dot"></div> 准备聆听</div>
+      <div class="card-lbl">听后立即复述 — 尽量逐字重复</div>
+      <div class="sent-box blr" id="sent-box">按播放键听句子</div>
+
+      <!-- speed -->
+      <div class="row3" style="margin-top:12px;margin-bottom:0;">
+        <button class="seg-btn" id="sp-75" onclick="setSpeed(0.75)">0.75×</button>
+        <button class="seg-btn on-green" id="sp-100" onclick="setSpeed(1.0)">1.0×</button>
+        <button class="seg-btn" id="sp-125" onclick="setSpeed(1.25)">1.25×</button>
+      </div>
+
+      <!-- accent -->
+      <div class="row3" style="margin-top:8px;margin-bottom:0;">
+        <button class="seg-btn on-purple" id="ac-AU" onclick="setAccent('AU')">🇦🇺 澳洲</button>
+        <button class="seg-btn" id="ac-UK" onclick="setAccent('UK')">🇬🇧 英国</button>
+        <button class="seg-btn" id="ac-US" onclick="setAccent('US')">🇺🇸 美国</button>
+        <button class="seg-btn" id="ac-IN" onclick="setAccent('IN')">🇮🇳 印度</button>
+      </div>
+
+      <!-- 性别选择 -->
+      <div class="row3" style="margin-top:8px;margin-bottom:0;">
+        <button class="seg-btn on-blue" id="gd-M" onclick="setGender('M')" style="flex:none;padding:7px 20px;">👨 男声</button>
+        <button class="seg-btn" id="gd-F" onclick="setGender('F')" style="flex:none;padding:7px 20px;">👩 女声</button>
+        <div style="flex:1;font-size:11px;color:var(--t3);display:flex;align-items:center;padding-left:8px;" id="voice-name-display">Neural2</div>
+      </div>
+      </div>
+
+      <button class="play-btn" id="play-btn" onclick="playSentence()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        播放音频
+      </button>
+      <div class="prog-track"><div class="prog-fill" id="play-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- record card -->
+    <div class="card">
+      <div class="card-lbl">你的复述</div>
+      <div class="mic-wrap">
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()" disabled>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <div class="mic-info">
+          <div class="mic-st" id="mic-st">先播放音频</div>
+          <div class="wave" id="wave"></div>
+        </div>
+        <div class="rec-t" id="rec-t"></div>
+      </div>
+      <div class="trans" id="trans">录音后您的复述将出现在这里...</div>
+    </div>
+
+    <!-- result (hidden) -->
+    <div id="result" style="display:none;">
+      <div class="card">
+        <div class="card-lbl">词语对比</div>
+        <div class="cmp-row" id="cmp-row"></div>
+        <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:var(--green);">● 正确</span>
+          <span style="font-size:11px;color:var(--red);">● 遗漏</span>
+          <span style="font-size:11px;color:var(--amber);opacity:0.8;">● 虚词遗漏</span>
+          <span style="font-size:11px;color:var(--t3);">● 多余</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">得分</div>
+        <div class="sc-grid">
+          <div class="sc"><div class="sc-v" id="sc-acc">—</div><div class="sc-l">准确率</div></div>
+          <div class="sc"><div class="sc-v" id="sc-words">—</div><div class="sc-l">词语匹配</div></div>
+        </div>
+      </div>
+      <button class="next-btn" onclick="nextSentence()">下一句 →</button>
+    </div>
+
+  </div>
+  <div class="bnav">
+    <button class="nav-it on" id="nav-practice" onclick="showPage('practice')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      练习
+    </button>
+    <button class="nav-it" id="nav-mistakes" onclick="showPage('mistakes')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      错题本
+    </button>
+    <button class="nav-it" id="nav-settings" onclick="showPage('settings')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      设置
+    </button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<!-- ===== MISTAKES ===== -->
+<div class="page" id="pg-mistakes">
+  <div class="safe-top"></div>
+  <div class="hdr">
+    <div class="hdr-title">错题本</div>
+    <button style="font-size:12px;color:var(--red);background:none;border:none;cursor:pointer;padding:6px;" onclick="clearMistakes()">清空</button>
+  </div>
+  <div class="scroll" id="mistakes-list">
+    <div class="empty" id="mi-empty">暂无错题<br><span style="font-size:13px;">准确率低于70%的句子<br>会自动记录在这里</span></div>
+  </div>
+  <div class="bnav">
+    <button class="nav-it" id="nav-practice2" onclick="showPage('practice')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      练习
+    </button>
+    <button class="nav-it on" id="nav-mistakes2" onclick="showPage('mistakes')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      错题本
+    </button>
+    <button class="nav-it" id="nav-settings2" onclick="showPage('settings')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      设置
+    </button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="page" id="pg-settings">
+  <div class="safe-top"></div>
+  <div class="hdr"><div class="hdr-title">设置</div></div>
+  <div class="scroll">
+    <div class="card">
+      <div class="card-lbl">🔑 Google Cloud API Key</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:8px;">
+        用于真人语音（TTS）和语音识别（STT）。Key 只保存在您的设备本地，不会上传。<br>
+        获取地址：<span style="color:var(--blue);">console.cloud.google.com → Credentials</span>
+      </div>
+      <input class="key-inp" type="password" id="key-tts" placeholder="AIzaSy..." autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="save-btn" onclick="saveKey()" style="margin-top:14px;">保存</button>
+      <div style="font-size:12px;color:var(--t3);margin-top:8px;text-align:center;" id="key-st"></div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">功能说明</div>
+      <div class="set-row">
+        <div><div class="set-lbl">真人语音</div><div class="set-sub">Google WaveNet 澳/英/美/印</div></div>
+        <div style="font-size:12px;color:var(--green);">✓</div>
+      </div>
+      <div class="set-row">
+        <div><div class="set-lbl">语音识别</div><div class="set-sub">Google Cloud Speech-to-Text</div></div>
+        <div style="font-size:12px;color:var(--green);">✓</div>
+      </div>
+      <div class="set-row">
+        <div><div class="set-lbl">预计费用</div><div class="set-sub">每句约 A$0.002–0.004</div></div>
+        <div style="font-size:12px;color:var(--amber);">极低</div>
+      </div>
+      <div class="set-row">
+        <div><div class="set-lbl">错题自动记录</div><div class="set-sub">准确率 &lt;70% 自动存档</div></div>
+        <div style="font-size:12px;color:var(--green);">✓</div>
+      </div>
+    </div>
+    <div class="card" style="font-size:13px;color:var(--t2);line-height:1.8;">
+      <div class="card-lbl">安装到主屏幕</div>
+      Safari → 分享按钮 → 添加到主屏幕<br>即可像 App 一样全屏使用
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="nav-it" id="nav-practice3" onclick="showPage('practice')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      练习
+    </button>
+    <button class="nav-it" id="nav-mistakes3" onclick="showPage('mistakes')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      错题本
+    </button>
+    <button class="nav-it on" id="nav-settings3" onclick="showPage('settings')">
+      <svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      设置
+    </button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const DATA = {
+  easy:[
+    "Please close the door when you leave the room.",
+    "The library opens at nine o'clock in the morning.",
+    "She decided to take a walk in the park after dinner.",
+    "The students finished their homework before the deadline.",
+    "He always drinks coffee before starting his work.",
+    "The bus arrives every fifteen minutes on weekdays.",
+    "Could you please pass me the salt and pepper?",
+    "We need to buy some groceries before the shops close.",
+    "The children played outside until it started to rain.",
+    "She called her friend to cancel their lunch plans.",
+    "The museum is open every day except Monday.",
+    "He forgot to bring his umbrella and got wet.",
+    "Please turn off the lights before you go to bed.",
+    "The shop closes at six o'clock on Fridays.",
+    "She enjoys reading books in the garden on weekends.",
+    "The train was delayed by twenty minutes this morning.",
+    "He asked the teacher a question after the class.",
+    "They decided to eat dinner at a new restaurant.",
+    "The weather forecast says it will rain tomorrow.",
+    "She borrowed a book from the library last week.",
+    "The meeting has been moved to Thursday afternoon.",
+    "He needs to renew his passport before the trip.",
+    "The cat likes to sleep on the sofa all day.",
+    "Please fill in this form and hand it to the receptionist.",
+    "She sent an email to confirm the appointment.",
+    "The supermarket is located next to the post office.",
+    "He drinks a glass of water before every meal.",
+    "The children were excited about the school trip.",
+    "She finished the report just before the deadline.",
+    "The park is very busy on sunny afternoons.",
+    "He took the dog for a walk along the river.",
+    "She made a cup of tea and sat by the window.",
+    "The flight departs at seven thirty in the morning.",
+    "Please remember to bring your student card to the exam.",
+    "He spent the whole afternoon fixing his bicycle.",
+    "The new shopping centre opened last weekend.",
+    "She signed up for a cooking class on Tuesday evenings.",
+    "The doctor advised him to rest for a few days.",
+    "They moved into their new house at the end of last month.",
+    "She watered the plants before leaving for work.",
+    "The café near the station serves excellent coffee.",
+    "He returned the books to the library on time.",
+    "Please write your name and student number at the top of the page.",
+    "She has been learning to play the piano for two years.",
+    "The fire alarm went off during the lunch break.",
+    "He left his keys on the kitchen table again.",
+    "The swimming pool is closed for maintenance this week.",
+    "She bought a new jacket at the weekend sale.",
+    "The dentist appointment is at half past two on Wednesday.",
+    "He cleaned the house before his parents arrived.",
+    "The post office is only open on weekday mornings.",
+    "She remembered to pack her charger this time.",
+    "The children helped set the table before dinner.",
+    "He gets up early every morning to go jogging.",
+    "She picked up her son from school at three o'clock.",
+    "The local council is fixing the road outside the school.",
+    "He prefers to walk to work rather than take the bus.",
+    "She watched a documentary about ocean wildlife last night.",
+    "The pharmacy closes early on Saturday afternoons.",
+    "He called his mother every Sunday without fail.",
+    "The students handed in their assignments on time.",
+    "She packed a light lunch and headed to the office.",
+    "The garden looks beautiful after the recent rain.",
+    "He paid the electricity bill online this morning.",
+    "She joined a local running club last spring.",
+    "The recycling bins are collected every second Tuesday.",
+    "He missed the last bus and had to take a taxi.",
+    "She printed the boarding pass before leaving home.",
+    "The neighbours invited them to a barbecue on Saturday.",
+    "He thanked the waiter and left a small tip.",
+    "She organised all her files before the school term started.",
+    "The bakery on the corner sells fresh bread every morning.",
+    "He wore his coat because it was cold outside.",
+    "She made sure to lock the front door before leaving.",
+    "The hospital visiting hours are from two to four in the afternoon.",
+    "He saved enough money to buy a new laptop.",
+    "She spent the holidays visiting her grandparents in the countryside.",
+    "The local market is held every Saturday in the town square.",
+    "He checked the weather before planning the outdoor event.",
+    "She forgot to set her alarm and woke up late.",
+    "The children went to bed after watching a short film.",
+    "He carried the heavy bags up to the third floor.",
+    "She ordered a vegetarian meal at the restaurant.",
+    "The bus stop is just around the corner from the school.",
+    "He submitted his job application before the closing date.",
+    "She taught herself how to cook several new dishes.",
+    "The office is closed on public holidays.",
+    "He borrowed a pen from his classmate during the exam.",
+    "She arranged to meet her friend for lunch downtown.",
+    "The rubbish bins need to be taken out tonight.",
+    "He finished painting the fence by the end of the day.",
+    "She called the plumber to fix the leaking tap.",
+    "The cinema is showing three new films this weekend.",
+    "He reminded his daughter to take her medicine before school.",
+    "She decided to volunteer at the local food bank.",
+    "The school term begins again at the end of January.",
+    "He chose a window seat so he could enjoy the view.",
+    "She gave her old clothes to the charity shop.",
+    "The heating broke down in the middle of winter.",
+    "He read the instructions carefully before putting the furniture together.",
+    "She wrapped the birthday present and wrote a card.",
+    "The bridge is under repair and will reopen next month.",
+    "He took a shortcut through the park to save time.",
+    "She attended a workshop on time management last Friday.",
+    "The neighbours complained about the noise from the party.",
+    "He replaced the batteries in the smoke detector.",
+    "She looked up the bus timetable on her phone.",
+    "The students gathered in the hall for the morning assembly.",
+    "He apologised for being late to the meeting.",
+    "She dropped her children at school before going to the gym.",
+    "The new café offers free wifi to all customers.",
+    "He ironed his shirt and polished his shoes for the interview.",
+    "She returned the faulty item to the shop for a refund.",
+    "The local library offers free computer classes for seniors.",
+    "He always checks the expiry date before buying food.",
+    "She updated her contact details on the university website.",
+    "The football match was cancelled due to heavy rain.",
+    "He prepared a list of questions before the job interview.",
+    "She noticed the sign said the lift was out of order.",
+    "The council has approved plans for a new community centre.",
+    "He switched off his phone during the performance.",
+    "She packed her gym bag the night before her early class.",
+    "The traffic lights on Main Street are being replaced.",
+    "He filled up the car with petrol on the way to work.",
+    "She brought homemade biscuits to share with her colleagues.",
+    "The festival attracted thousands of visitors over the long weekend.",
+    "He asked for extra time to complete the assignment.",
+    "She remembered to water the garden before the heatwave.",
+    "The staff meeting will be held in the conference room at noon.",
+    "He chose a quiet table near the window at the cafe.",
+    "She returned home to find her flatmate had already cooked dinner.",
+    "The school holidays begin at the end of this week.",
+    "He wrote a thank-you note after the job interview.",
+    "She downloaded the app to track her daily exercise.",
+    "The morning class starts at eight forty-five sharp.",
+    "He ran into an old friend while shopping in the city.",
+    "She decided to take the stairs instead of the lift.",
+    "The bookshop is having a sale on all children's books.",
+    "He called ahead to check if the restaurant accepted reservations.",
+    "She folded the laundry and put it away before dinner.",
+    "The swimming lessons for beginners start next Monday.",
+    "He asked a police officer for directions to the station.",
+    "She planted sunflowers along the back fence of the garden.",
+    "The bin lids need to be secured before the wind picks up.",
+    "He rehearsed his presentation several times before the event.",
+    "She saved the document and sent it to her supervisor.",
+    "The market stalls open at seven in the morning on weekends.",
+    "He celebrated his birthday with a small gathering of close friends.",
+    "She looked both ways before crossing the road.",
+    "The council has extended the deadline for public submissions.",
+    "He found a quiet corner in the library to study.",
+    "She offered to help carry the shopping bags to the car.",
+    "The airport shuttle departs every thirty minutes from the terminal.",
+    "He reminded his team about the deadline at the morning briefing.",
+    "She took her umbrella in case it rained during the afternoon.",
+    "The petrol station on the highway is open twenty-four hours.",
+    "He recorded the lecture so he could review it later.",
+    "She asked her flatmate to pick up some milk on the way home.",
+    "The kindergarten enrolment forms are due by the end of the month.",
+    "He signed the contract and handed it back to the real estate agent.",
+    "She attended all her tutorials and submitted every assignment on time.",
+    "The community garden is maintained by local volunteers every weekend.",
+    "He turned down the volume on the television after midnight.",
+    "She scheduled a haircut for the day before the conference.",
+    "The town hall has free parking on weekends and public holidays.",
+    "He helped his neighbour bring in the groceries from the car.",
+    "She noticed that her bus pass had expired and topped it up.",
+    "The gym offers a free trial week for new members.",
+    "He made sure all the windows were closed before the storm.",
+    "She left a note on the fridge reminding everyone about the dinner.",
+    "The printer ran out of paper in the middle of the job.",
+    "He walked his daughter to school every morning without exception.",
+    "She registered for the online course three days before it started.",
+    "The café closes at four in the afternoon on Sundays.",
+    "He spent the weekend sorting through boxes from the old house.",
+    "She kept a spare key under the mat in case she was locked out.",
+    "The council collects green waste on the last Friday of every month.",
+    "He bought flowers for his mother on her birthday.",
+    "She printed two copies of the report just to be safe.",
+    "The new footpath along the river will be completed by summer.",
+    "He forgot his lunch and had to buy something from the canteen.",
+    "She set a reminder on her phone for the parent-teacher interview.",
+    "The post arrived earlier than usual this morning.",
+    "He cleaned out the fridge and made a list of what was needed.",
+    "She wore comfortable shoes knowing she would be walking all day.",
+    "The local pool is open for lap swimming from six in the morning.",
+    "He thanked his colleague for covering his shift at short notice.",
+    "She phoned the insurance company to update her policy details.",
+    "The bus timetable changes during the school holiday period.",
+    "He asked the receptionist to reschedule his appointment.",
+    "She made a point of arriving ten minutes early to every meeting.",
+    "The spare room has been converted into a home office.",
+    "He packed a change of clothes in case the meeting ran late.",
+    "She remembered to submit her tax return before the end of October.",
+    "The street outside the school is closed to traffic in the mornings.",
+    "He double-checked his bag before leaving the house.",
+    "She cooked a large batch of soup to freeze for later in the week.",
+    "The library has extended its opening hours during exam period.",
+    "He fixed the broken hinge on the kitchen cupboard door.",
+    "She noticed the fuel light was on and stopped at the next service station.",
+    "The nature reserve is closed on Mondays for maintenance.",
+    "He helped his son with his science project the night before it was due.",
+    "She rang the council to report a pothole on her street.",
+    "The staff are reminded to sign out before leaving the building.",
+    "He topped up his travel card before the morning peak hour.",
+    "She arranged for a neighbour to water her plants while she was away.",
+    "The community centre runs free yoga classes on Wednesday mornings.",
+    "He left early to avoid the traffic on the main road.",
+    "She downloaded the updated form from the department website.",
+    "The express train does not stop at the intermediate stations.",
+    "He kept the receipt in case he needed to return the item.",
+    "She confirmed the booking by phone and received a reference number.",
+    "The maintenance crew will be working on the roof this week.",
+    "He passed his driving test on the second attempt.",
+    "She bought a reusable coffee cup to reduce her daily waste.",
+    "The council meeting will be broadcast live on the local radio station.",
+    "He attached all the required documents to the application form.",
+    "She reminded herself to collect the dry cleaning on the way home.",
+    "The after-school program runs from three thirty until five o'clock.",
+    "He helped the elderly woman carry her shopping to the taxi.",
+    "She updated her resume before applying for the new position.",
+    "The school canteen will be closed for renovations next week.",
+    "He parked the car in the visitors' bay outside the office.",
+    "She kept a diary to track her goals and daily achievements.",
+    "The building inspection is scheduled for early next Tuesday morning.",
+    "He picked up a takeaway on the way home to save time cooking.",
+    "She completed the online survey in less than five minutes.",
+    "The rubbish must be left on the kerb by seven in the morning.",
+    "He took his son to the doctor for his annual health check.",
+    "She turned off the tap while brushing her teeth to save water.",
+    "The train platform was crowded during the evening peak hour.",
+    "He wrote down the phone number before closing the webpage.",
+    "She applied for a parking permit for the new semester.",
+    "The walking trail is clearly marked and suitable for all fitness levels.",
+    "He helped his daughter practice her speech for the school assembly.",
+    "She cancelled the newspaper subscription she no longer needed.",
+    "The smoke detector needs its batteries replaced twice a year.",
+    "He submitted the insurance claim within the required timeframe.",
+    "She cleared out the garage to make room for the new car.",
+    "The council has introduced new rules about backyard burning.",
+    "He chose the healthier option from the menu at the staff lunch.",
+    "She set her out-of-office reply before leaving for the conference.",
+    "The recycling centre is open from eight in the morning to midday.",
+    "He sent the invoice to the accounts department for processing.",
+    "She reminded her children to put on sunscreen before going outside.",
+    "The new pedestrian crossing has made the street much safer.",
+    "He noted down the key points from the presentation.",
+    "She booked a table for six people at the waterfront restaurant.",
+    "The community noticeboard is updated every Monday morning.",
+    "He arrived at the airport two hours before the scheduled departure.",
+    "She took detailed notes during the orientation session.",
+    "The afternoon session will begin after a short tea break.",
+    "He sorted the recyclables before putting them in the bin.",
+    "She asked her manager for feedback on her recent project.",
+    "The pharmacy will have the prescription ready within the hour.",
+    "He chose a comfortable pair of walking shoes for the long day ahead.",
+    "She organised a farewell dinner for her colleague who was leaving.",
+    "He stopped at the service station to check the tyre pressure.",
+    "She enrolled in an online course to improve her data skills.",
+    "The local council has banned single-use plastic bags in the area.",
+    "He asked for a window seat when checking in for his flight.",
+    "She sent her parents a postcard from every city she visited.",
+    "The school has introduced a new uniform policy from next term.",
+    "He made a shopping list so he would not forget anything at the supermarket.",
+    "She chose the apartment because it was close to public transport.",
+    "The library charges a small fee for reserving books in advance.",
+    "He called ahead to check whether the restaurant had vegetarian options.",
+    "She ironed her clothes the night before to save time in the morning.",
+    "The council has installed new benches and bins along the foreshore.",
+    "He applied for annual leave two weeks before his planned holiday.",
+    "She reminded her flatmate to pay the electricity bill before it was overdue.",
+    "The sports centre is closed on Christmas Day and New Year's Day.",
+    "He replaced the light bulb in the hallway after it had been flickering for a week.",
+    "She checked her bank balance before making any large purchases.",
+    "The hospital has a strict no-visitor policy for patients in intensive care.",
+    "He gave his seat to an elderly passenger on the crowded bus.",
+    "She kept a spare charger at the office so she was never caught without power.",
+    "The local primary school is collecting tinned food for the annual food drive.",
+    "He measured the room carefully before ordering the new furniture.",
+    "She renewed her gym membership online instead of going into the branch.",
+    "The staff car park is for permit holders only between eight and six on weekdays.",
+    "He booked a seat on the early morning train to avoid the peak hour rush.",
+    "She put her wet umbrella in the stand by the entrance before going in.",
+    "The community noticeboard outside the library has information about local events.",
+    "He ate breakfast on the balcony to enjoy the warm morning air.",
+    "She called the pharmacy to check whether her prescription was ready.",
+    "The council has closed one lane of the bridge for emergency repairs.",
+    "He downloaded the app and set up his account before the first day of class.",
+    "She dropped her car at the mechanic and caught the bus to work.",
+    "The school asks parents to sign the permission slip before the excursion.",
+    "He locked his bicycle to the rack outside the building.",
+    "She asked the hotel receptionist to arrange an early morning wake-up call.",
+    "The car needs its oil changed every ten thousand kilometres.",
+    "He wrapped the leftover food in foil and put it in the fridge.",
+    "She kept a first aid kit in the car in case of emergencies.",
+    "The community hall is available for hire on weekends for private functions.",
+    "He replaced the broken window latch before winter arrived.",
+    "She typed up the meeting minutes and circulated them to all attendees.",
+    "The after-school care program accepts enrolments for the coming term.",
+    "He submitted the completed application form before the office closed."
+  ],
+  medium:[
+    "The conference has been postponed until further notice due to unforeseen circumstances.",
+    "Participants are required to register online at least two weeks prior to the event.",
+    "The researchers published their findings in a peer-reviewed journal last month.",
+    "She received a scholarship to study abroad for the following academic year.",
+    "The new policy will come into effect from the beginning of next quarter.",
+    "Students are encouraged to consult with their supervisors before submitting final drafts.",
+    "The committee will review all applications and notify successful candidates within ten days.",
+    "Regular physical activity has been shown to significantly reduce the risk of chronic disease.",
+    "The university offers a range of support services for students experiencing academic difficulties.",
+    "Applications submitted after the closing date will not be considered under any circumstances.",
+    "The government has announced a series of measures to address the rising cost of living.",
+    "Researchers have found a strong link between sleep quality and academic performance.",
+    "The organisation relies heavily on volunteers to deliver its community programs.",
+    "Students must obtain written permission from their faculty before enrolling in additional courses.",
+    "The report highlights the need for greater investment in renewable energy infrastructure.",
+    "The hospital is currently recruiting experienced nurses for its emergency department.",
+    "Local councils are responsible for maintaining roads and public parks in their areas.",
+    "The lecture will cover the theoretical foundations of modern economic policy.",
+    "All employees are expected to complete the workplace health and safety training by Friday.",
+    "The funding proposal must include a detailed budget and a clear timeline for implementation.",
+    "Climate change poses significant challenges to food security in developing nations.",
+    "The university library provides access to thousands of academic journals and databases.",
+    "Candidates are advised to read all instructions carefully before beginning the examination.",
+    "The company has decided to expand its operations into the South-East Asian market.",
+    "Effective communication skills are essential for success in most professional environments.",
+    "The study found that students who sleep at least eight hours perform better academically.",
+    "The mayor announced plans to reduce carbon emissions by forty percent within five years.",
+    "Residents are encouraged to report any suspicious activity to the local police station.",
+    "The new curriculum places greater emphasis on critical thinking and problem solving.",
+    "International students must provide evidence of English proficiency before enrolment.",
+    "The board of directors approved the merger after months of negotiation.",
+    "Public transport usage has increased significantly since the introduction of the new timetable.",
+    "The museum's latest exhibition explores the history of indigenous art in Australia.",
+    "Scientists warn that ocean temperatures are rising at an unprecedented rate.",
+    "The annual budget must be submitted to the finance department by the end of the month.",
+    "The school is introducing a new program to support students with learning difficulties.",
+    "Investors are advised to seek independent financial advice before making major decisions.",
+    "The research team is seeking volunteers between the ages of eighteen and sixty-five.",
+    "A strong educational background is often considered essential for senior management roles.",
+    "The building has been designed to meet the highest environmental sustainability standards.",
+    "Local businesses are being encouraged to adopt more sustainable practices.",
+    "The scholarship covers full tuition fees as well as a monthly living allowance.",
+    "All residents are required to separate their waste into clearly labelled bins.",
+    "The government is reviewing the current immigration policy in light of recent data.",
+    "The training program is designed to improve participants' leadership and communication skills.",
+    "New research suggests that urban green spaces can significantly reduce stress levels.",
+    "The committee has drafted a proposal to reform the existing healthcare funding model.",
+    "Students are reminded that academic misconduct can result in serious disciplinary action.",
+    "The annual report shows a steady increase in revenue over the past three years.",
+    "The conference attracted delegates from more than forty countries around the world.",
+    "The city council is seeking community feedback on the proposed development plan.",
+    "Technological innovation is transforming the way businesses operate across all industries.",
+    "The guidelines recommend a maximum of two hours of screen time per day for children.",
+    "The project was completed on time and within the allocated budget.",
+    "Participants will receive a certificate of completion at the end of the workshop.",
+    "The department has implemented a new system to streamline the application process.",
+    "Research indicates that early childhood education has long-term benefits for cognitive development.",
+    "The airline has introduced additional flights to meet the growing demand for travel.",
+    "All staff are required to attend the mandatory professional development session next week.",
+    "The findings suggest a need for more targeted support for disadvantaged communities.",
+    "The exhibition will remain open to the public until the end of February.",
+    "The policy aims to reduce inequality by increasing access to affordable housing.",
+    "Students who require special accommodations must apply to the disability services office.",
+    "The organisation has set ambitious targets for reducing its environmental footprint.",
+    "The health department has issued guidelines on preventing the spread of infectious disease.",
+    "The proposal outlines a number of strategies to improve outcomes for rural students.",
+    "Local farmers are facing increasing pressure due to prolonged drought conditions.",
+    "The review panel will consider all submissions before making its final recommendations.",
+    "Employers are increasingly looking for candidates with experience in digital technologies.",
+    "The institute offers a range of short courses designed for working professionals.",
+    "The survey results indicate a growing concern about mental health among young people.",
+    "All applications must be accompanied by a current resume and two references.",
+    "The development of renewable energy sources is critical to achieving net zero emissions.",
+    "The principal addressed the assembly and outlined the school's priorities for the year.",
+    "The legislation requires all employers to provide a safe working environment for staff.",
+    "The funding will support research into new treatments for rare genetic conditions.",
+    "Community consultation will take place over the next three months before any decision is made.",
+    "The institute provides mentoring services to help new students transition to university life.",
+    "The proposal was rejected by the council due to concerns about its environmental impact.",
+    "All participants must sign a consent form before taking part in the research study.",
+    "The government is investing heavily in infrastructure to support regional economic growth.",
+    "The program is open to applicants who have completed at least two years of undergraduate study.",
+    "The library's digital resources can be accessed remotely using a valid student login.",
+    "The new regulation requires food manufacturers to clearly list all ingredients on the packaging.",
+    "The organisation is committed to promoting diversity and inclusion in the workplace.",
+    "The seminar will examine the social and economic impacts of rapid urbanisation.",
+    "Graduates with postgraduate qualifications tend to earn significantly higher salaries.",
+    "The university is offering a number of additional tutorial sessions during the exam period.",
+    "The minister confirmed that the legislation would be introduced to parliament next month.",
+    "Effective waste management is essential for maintaining a clean and healthy environment.",
+    "The research project has received funding from both public and private sector organisations.",
+    "International students must maintain satisfactory academic progress to retain their visa status.",
+    "The report recommends increasing the minimum wage to keep pace with the cost of living.",
+    "The council has approved a new zoning plan to allow for greater residential density.",
+    "Advances in medical technology have significantly improved outcomes for cancer patients.",
+    "The program equips participants with the practical skills needed to enter the workforce.",
+    "The speaker encouraged students to take advantage of all available networking opportunities.",
+    "The committee meets on the third Tuesday of every month to review progress reports.",
+    "The introduction of electric vehicles is expected to reduce urban air pollution significantly.",
+    "All overseas applicants must have their qualifications assessed by the relevant authority.",
+    "The new student accommodation will house up to five hundred residents from next semester.",
+    "Researchers are investigating the relationship between diet and mental health outcomes.",
+    "The organisation has partnered with local schools to deliver its literacy program.",
+    "Staff members are encouraged to participate in the internal professional development program.",
+    "The council has approved funding for a new multipurpose community facility.",
+    "The course is structured to allow students to study at their own pace online.",
+    "Significant progress has been made in reducing childhood poverty over the past decade.",
+    "The department has released updated guidelines for managing conflicts of interest.",
+    "The proposed changes to the tax system have attracted significant public debate.",
+    "The workshop is limited to twenty participants and bookings are essential.",
+    "The report identifies housing affordability as the most pressing issue facing young families.",
+    "Students are advised to back up their work regularly to avoid losing important files.",
+    "The committee is expected to release its findings before the end of the financial year.",
+    "The company has pledged to achieve carbon neutrality within the next decade.",
+    "Attendance at all scheduled tutorials is strongly encouraged throughout the semester.",
+    "The proposal received strong support from both community groups and local businesses.",
+    "The faculty is reviewing its assessment policies in response to student feedback.",
+    "The government has announced additional funding for mental health services in regional areas.",
+    "Applicants must demonstrate a high level of proficiency in both written and spoken English.",
+    "The study explores how digital media consumption affects attention spans in adolescents.",
+    "The new transit system will connect the outer suburbs directly to the city centre.",
+    "The board approved the revised budget after several rounds of consultation with stakeholders.",
+    "The program is designed to support entrepreneurs from culturally diverse backgrounds.",
+    "All written assignments must be submitted through the online portal by midnight.",
+    "The organisation has developed a comprehensive strategy to address staff wellbeing.",
+    "The council will hold a public meeting to discuss the proposed changes to the local area.",
+    "The initiative aims to improve access to quality education in remote communities.",
+    "The research team has been awarded a significant grant to continue its groundbreaking work.",
+    "The legislation was passed with bipartisan support after lengthy debate in parliament.",
+    "The workshop will provide participants with tools to manage workplace conflict effectively.",
+    "The scholarship is open to students who can demonstrate both academic merit and financial need.",
+    "Public health campaigns have played a major role in reducing smoking rates over recent decades.",
+    "The university has introduced a new grading system to better reflect student achievement.",
+    "The committee recommended that all funding decisions be made transparently and consistently.",
+    "The festival showcases the work of emerging artists from across the country.",
+    "The government has committed to building five thousand new social housing units over three years.",
+    "The revised submission guidelines have been posted on the faculty website.",
+    "The institute is developing new pathways to help vocational students transition to university.",
+    "Employers are encouraged to offer flexible working arrangements to support work-life balance.",
+    "The report found that many households are struggling to cover basic living expenses.",
+    "The new library database allows students to search across multiple collections simultaneously.",
+    "All candidates must complete a compulsory interview as part of the selection process.",
+    "The local government is working to improve cycling infrastructure throughout the city.",
+    "The organisation provides free legal advice to people who cannot afford representation.",
+    "The building's energy efficiency has been significantly improved through recent upgrades.",
+    "The health authority has urged the public to stay up to date with their vaccinations.",
+    "Participants are expected to contribute actively to group discussions throughout the course.",
+    "The department is consulting with industry partners to ensure the curriculum remains relevant.",
+    "The new waste reduction strategy aims to divert seventy percent of landfill within five years.",
+    "The annual symposium brings together researchers from universities around the world.",
+    "The organisation is seeking expressions of interest from suitably qualified candidates.",
+    "All students must complete a minimum number of supervised hours to qualify for graduation.",
+    "The proposed development has raised concerns about traffic congestion in the local area.",
+    "The university's international office provides support to students adjusting to life in Australia.",
+    "The study identified a significant gap between rural and urban access to healthcare services.",
+    "The department will hold an information session for prospective students next Wednesday.",
+    "The new regulation requires all residential buildings to meet updated fire safety standards.",
+    "The program has helped hundreds of jobseekers find stable employment in the past year.",
+    "The council has approved a grant to support local arts and cultural organisations.",
+    "All teaching staff are required to complete annual performance reviews.",
+    "The initiative provides funding to schools in disadvantaged areas for additional resources.",
+    "The government has extended the deadline for businesses to comply with the new regulations.",
+    "The university is committed to providing an inclusive learning environment for all students.",
+    "The research suggests that peer mentoring can have a significant impact on student retention.",
+    "The development will include affordable housing units as part of the planning agreement.",
+    "The course introduces students to key concepts in environmental science and sustainability.",
+    "The funding body requires quarterly progress reports from all grant recipients.",
+    "The task force has been established to review the current approach to urban planning.",
+    "Participants are encouraged to share their experiences and insights during the workshop.",
+    "The new recycling initiative has already reduced landfill waste by fifteen percent.",
+    "The organisation operates across multiple locations and employs over three thousand staff.",
+    "The proposal outlines a clear framework for achieving the government's housing targets.",
+    "The university library is expanding its collection of digital resources for postgraduate students.",
+    "The department has released its strategic plan for the next five years.",
+    "The government has pledged to fund additional early childhood education places nationwide.",
+    "Students should familiarise themselves with the academic integrity policy before submitting work.",
+    "The training program will be delivered over six weeks in a blended learning format.",
+    "The review highlighted the importance of community engagement in local decision making.",
+    "The new regulation will require all employers to report their gender pay gap annually.",
+    "The hospital has introduced a new triage system to reduce waiting times in the emergency department.",
+    "The government has partnered with the private sector to fund a major infrastructure project.",
+    "The policy aims to ensure that all children have access to quality early education.",
+    "The research centre is seeking applications from outstanding doctoral candidates worldwide.",
+    "The building has received a five-star environmental rating for its sustainable design features.",
+    "The faculty is reviewing the structure of its undergraduate degree programs.",
+    "Participants in the study will be asked to complete a questionnaire at regular intervals.",
+    "The council has voted to increase funding for public libraries and community facilities.",
+    "The minister emphasised the importance of early intervention in addressing youth unemployment.",
+    "The guidelines require that all clinical trials be registered before they begin.",
+    "The program offers paid internships to help students gain relevant work experience.",
+    "The community has raised significant concerns about the potential environmental impact.",
+    "The department has developed resources to help teachers support students with diverse needs.",
+    "The study found that access to green spaces improves both physical and mental wellbeing.",
+    "The university is committed to reducing its carbon footprint by the end of the decade.",
+    "The council will vote on the proposed rezoning at its next scheduled meeting.",
+    "All students are expected to maintain academic integrity throughout their studies.",
+    "The organisation is working with government to develop a national strategy for digital inclusion.",
+    "The annual fundraising campaign supports programs that benefit disadvantaged youth.",
+    "The department of health has released new guidelines on managing chronic conditions.",
+    "The proposed changes have been welcomed by industry groups but criticised by unions.",
+    "The committee will consider all feedback before finalising its recommendations.",
+    "The university library is open seven days a week during the examination period.",
+    "The program provides mentoring and professional development for early career researchers.",
+    "The city is investing in new walking and cycling paths to encourage active transport.",
+    "The course content is reviewed annually to ensure it reflects current industry practice.",
+    "The council is developing a master plan to guide growth in the region over the next twenty years.",
+    "The funding will enable the organisation to expand its services to more communities.",
+    "Students are reminded that all group work must be completed collaboratively and acknowledged.",
+    "The government has announced a new incentive scheme to encourage home ownership.",
+    "The report calls for urgent action to address rising levels of food insecurity.",
+    "The department is working to simplify the application process for welfare payments.",
+    "The new policy aims to ensure consistent standards across all public schools.",
+    "The study shows that workplace flexibility leads to higher employee satisfaction and productivity.",
+    "The institute has established a new centre for research into artificial intelligence.",
+    "Applicants must provide certified copies of all academic transcripts with their application.",
+    "The local government area has seen strong population growth over the past five years.",
+    "The organisation is committed to achieving gender equity across all levels of leadership.",
+    "The conference will feature keynote speakers from leading universities and research institutions.",
+    "The council has extended the community consultation period by an additional four weeks.",
+    "All staff are required to declare any actual or perceived conflicts of interest.",
+    "The new program will provide targeted support to students who are at risk of falling behind.",
+    "The construction of the new hospital wing is expected to be completed by the end of the year.",
+    "The government is reviewing the age pension eligibility criteria as part of its budget process.",
+    "The report highlights significant disparities in health outcomes between different population groups.",
+    "The university has formed a partnership with industry to deliver work-integrated learning.",
+    "All postgraduate students must have their research proposals approved before commencing fieldwork.",
+    "The review found that the current model of service delivery is no longer sustainable.",
+    "The initiative has successfully connected over one thousand job seekers with local employers.",
+    "The council is encouraging residents to take part in the upcoming community satisfaction survey.",
+    "The department has allocated additional resources to support frontline healthcare workers.",
+    "The proposal was unanimously endorsed by the board at its most recent quarterly meeting.",
+    "The university is expanding its online course offerings to reach more students globally.",
+    "The scheme provides low-interest loans to small businesses affected by the economic downturn.",
+    "The task force will report its findings to the minister within three months.",
+    "The government has committed to reviewing the national curriculum over the coming year.",
+    "All assessment tasks must be completed individually unless the instructions specify otherwise.",
+    "The organisation has won several awards for its innovative approach to community development.",
+    "The proposal seeks to address systemic barriers to participation in higher education.",
+    "All international students are required to maintain a valid health insurance policy.",
+    "The government has launched a new strategy to increase workforce participation among older Australians.",
+    "The review panel will assess all submissions against the published evaluation criteria.",
+    "The institute has developed an online platform to support flexible and remote learning.",
+    "The board has commissioned an independent review of its governance structures and practices.",
+    "All new staff members are required to complete an induction program within their first month.",
+    "The report calls for a significant increase in funding for preventive health programs.",
+    "The council has approved the construction of a new pedestrian bridge across the river.",
+    "The university requires all students to achieve a satisfactory result in the academic integrity module.",
+    "The scheme has provided financial support to over two thousand small businesses in the region.",
+    "Applicants who do not meet the minimum entry requirements will not be considered for the program.",
+    "The department has released a consultation paper inviting public comment on the proposed reforms.",
+    "The initiative aims to double the number of women in senior leadership roles within three years.",
+    "The organisation has committed to publishing its annual sustainability report by the end of March.",
+    "All members of the selection panel are required to complete a conflict of interest declaration.",
+    "The council is reviewing its procurement policies to improve transparency and value for money.",
+    "The new student orientation program will be delivered online this semester.",
+    "The research project has generated a number of publications in high-impact international journals.",
+    "The government has announced a package of measures to support first home buyers.",
+    "The university has introduced mandatory mental health awareness training for all academic staff.",
+    "The organisation is working to expand its digital services in response to growing client demand.",
+    "All contractors working on the site are required to hold a current working with children check.",
+    "The committee has recommended that the funding model be reviewed every three years.",
+    "The department is seeking expressions of interest from suitably experienced consultants.",
+    "The policy framework provides guidance on how organisations should manage data and privacy.",
+    "The institute has partnered with industry to offer students paid work-integrated learning opportunities.",
+    "The annual conference will be held in a hybrid format to accommodate remote participants.",
+    "The review found that service delivery has improved significantly since the new model was introduced.",
+    "The faculty is offering additional support sessions for students who are struggling with the material.",
+    "The proposal includes provisions for ongoing monitoring and evaluation of outcomes.",
+    "The government has indicated that it will consult widely before introducing any legislative changes.",
+    "The council has endorsed a framework for managing the environmental impacts of new development.",
+    "All scholarship recipients are required to maintain a grade point average of at least six point five.",
+    "The program has been evaluated against its stated objectives and found to be largely effective.",
+    "The university library has extended its loan periods to support students during the examination period.",
+    "The department is investing in new technology to improve the efficiency of its administrative processes.",
+    "The organisation provides training and mentoring to community leaders in rural and remote areas.",
+    "The report notes that progress has been uneven across regions and recommends targeted investment.",
+    "The government has committed to a significant expansion of the aged care workforce over the next decade.",
+    "The council has developed a suite of educational resources to support compliance with the new regulations.",
+    "All student accommodation providers must be registered with the relevant state authority.",
+    "The government is working with universities to increase the number of domestic students in STEM fields.",
+    "The proposal has been developed in close consultation with affected communities and stakeholder groups.",
+    "The institute has received accreditation from the relevant professional body for a further five years.",
+    "The council will appoint an independent auditor to review its financial management practices.",
+    "The department has developed guidelines to support managers in addressing underperformance.",
+    "The initiative has attracted strong interest from both domestic and international organisations.",
+    "The university has established a dedicated support service for students experiencing financial hardship.",
+    "The review panel noted that the program had achieved its targets ahead of schedule.",
+    "The government has released a discussion paper on the future direction of vocational education policy.",
+    "The council has resolved to proceed with the development subject to a number of conditions.",
+    "The organisation is working to embed a culture of continuous improvement across all its operations.",
+    "The department will provide regular progress updates to the minister throughout the implementation period.",
+    "The proposal has been referred to the relevant committee for further consideration and advice.",
+    "The university has introduced a new framework for the recognition of prior learning and experience.",
+    "The council has approved a significant investment in the upgrade of sporting facilities across the region.",
+    "The organisation has developed a comprehensive risk management framework to guide its operations.",
+    "The government has committed to reducing the administrative burden on small and medium enterprises.",
+    "The report recommends that all government agencies develop and publish reconciliation action plans.",
+    "The department is working to improve the quality and consistency of data collected across the system.",
+    "The council has endorsed an ambitious target for the reduction of greenhouse gas emissions by two thousand and thirty.",
+    "The government has confirmed that the new funding arrangements will take effect from the beginning of the next financial year."
+  ],
+  hard:[
+    "The implications of the study's methodology have been contested by several independent researchers.",
+    "Despite significant advancements in medical technology, access to healthcare remains inequitable across socioeconomic groups.",
+    "The committee's recommendations were adopted with minor modifications following extensive deliberation among stakeholders.",
+    "Longitudinal data collected over a twenty-year period suggests a statistically significant correlation between the two variables.",
+    "The philosopher argued that objective moral truths exist independently of human consciousness and cultural convention.",
+    "Contemporary approaches to urban planning increasingly prioritise sustainable development and community engagement over economic growth.",
+    "The proliferation of digital platforms has fundamentally altered the dynamics of political communication and public discourse.",
+    "Neuroscientific evidence suggests that bilingualism may confer cognitive advantages that persist well into old age.",
+    "The arbitration panel concluded that the contractual obligations had been fulfilled in accordance with the agreed specifications.",
+    "Regulatory frameworks governing artificial intelligence must balance innovation with accountability to prevent potential societal harms.",
+    "The epistemological foundations of empirical research have been subject to considerable scrutiny within the philosophy of science.",
+    "Demographic shifts in many developed nations are placing unprecedented pressure on pension systems and aged care infrastructure.",
+    "The interplay between macroeconomic policy and microeconomic behaviour remains a contentious area within contemporary economic theory.",
+    "Postcolonial scholars have argued that dominant historical narratives systematically marginalise indigenous perspectives and lived experiences.",
+    "The increasing commodification of higher education has raised fundamental questions about the purpose and accessibility of academic knowledge.",
+    "Advances in genomic sequencing have significantly accelerated the identification of genetic markers associated with complex heritable conditions.",
+    "The tension between individual liberty and collective responsibility lies at the heart of many contemporary political and ethical debates.",
+    "The proliferation of misinformation across digital ecosystems poses a serious challenge to democratic institutions and civic participation.",
+    "Comparative analysis of legislative frameworks across jurisdictions reveals significant variation in the protection of intellectual property rights.",
+    "The capacity of market mechanisms to allocate resources efficiently has been fundamentally questioned in the context of public goods.",
+    "Archaeological evidence suggests that the emergence of complex social hierarchies preceded the development of written language in several ancient cultures.",
+    "The integration of artificial intelligence into clinical decision-making raises profound ethical and legal questions about accountability and informed consent.",
+    "Structural inequalities embedded in educational systems perpetuate socioeconomic disadvantage across generations despite targeted intervention programs.",
+    "The conceptual distinction between correlation and causation is frequently misunderstood in the popular interpretation of scientific research.",
+    "Environmental governance frameworks must reconcile the competing interests of economic development, biodiversity conservation, and indigenous land rights.",
+    "The discourse surrounding cultural appropriation reflects deeper tensions between the valorisation of cultural exchange and the protection of minority cultural heritage.",
+    "Quantitative modelling of climate scenarios consistently projects accelerating sea-level rise under current greenhouse gas emission trajectories.",
+    "The normative assumptions embedded in mainstream economic theory have been challenged by behavioural economists drawing on insights from cognitive psychology.",
+    "Constitutional reform processes in pluralist societies must navigate competing visions of national identity and institutional legitimacy.",
+    "The relationship between technological determinism and human agency remains a central concern in the sociology of technology.",
+    "Judicial interpretation of constitutional provisions involves a complex balancing of textual fidelity and evolving societal values.",
+    "The financialisation of housing markets in major metropolitan areas has exacerbated affordability constraints for low and middle-income households.",
+    "Cross-disciplinary collaboration between computational scientists and social researchers is increasingly essential for addressing complex global challenges.",
+    "The distinction between procedural and substantive conceptions of justice underpins many debates in contemporary political philosophy.",
+    "Rapid urbanisation in the Global South is generating significant environmental and public health challenges that require systemic policy responses.",
+    "The epistemological status of mathematical knowledge has been debated since antiquity, with competing positions ranging from Platonism to formalism.",
+    "Corporate governance mechanisms must be sufficiently robust to prevent conflicts of interest from compromising board-level decision-making.",
+    "The globalisation of supply chains has created complex interdependencies that expose national economies to systemic vulnerabilities.",
+    "Sociolinguistic research has documented the ways in which language use both reflects and reinforces existing power structures within communities.",
+    "The ethical dimensions of genetic enhancement technologies extend beyond individual autonomy to encompass broader questions of social justice and equity.",
+    "Institutional inertia often impedes the implementation of evidence-based policy reform, even when the empirical case for change is compelling.",
+    "The phenomenological tradition in philosophy emphasises the constitutive role of embodied experience in shaping human consciousness and perception.",
+    "Macroeconomic stabilisation policies must be carefully calibrated to avoid exacerbating inflationary pressures while supporting sustainable growth.",
+    "The growing body of research on epigenetics challenges simplistic understandings of the relationship between genetic inheritance and environmental factors.",
+    "Deliberative democratic theory holds that legitimate political decisions must emerge from inclusive processes of reasoned public debate.",
+    "The interpretation of ancient texts requires not only linguistic expertise but also a deep understanding of the historical and cultural context of their production.",
+    "Risk assessment frameworks in financial regulation must account for the systemic effects of correlated asset price movements during periods of market stress.",
+    "The boundaries between human creativity and machine-generated content are becoming increasingly difficult to delineate as generative technologies mature.",
+    "Poststructuralist critiques of grand narratives have profoundly influenced the methodological approaches adopted in contemporary historiography.",
+    "The resilience of democratic institutions depends critically on the existence of a free press, an independent judiciary, and an informed citizenry.",
+    "Anthropological fieldwork requires researchers to engage reflexively with their own cultural assumptions and their potential influence on data collection.",
+    "The transition to a circular economy requires fundamental changes to production processes, consumption patterns, and waste management infrastructure.",
+    "Asymmetric information in financial markets can lead to adverse selection and moral hazard, undermining the efficiency of resource allocation.",
+    "The philosophical debate between compatibilists and incompatibilists concerning free will and determinism remains unresolved despite centuries of inquiry.",
+    "International humanitarian law seeks to limit the conduct of armed conflict, but enforcement mechanisms remain inadequate in practice.",
+    "The integration of Indigenous ecological knowledge into contemporary conservation policy requires genuine partnership and shared decision-making authority.",
+    "Longitudinal studies of educational outcomes consistently demonstrate the disproportionate influence of socioeconomic background on academic achievement.",
+    "The emergence of platform economies has disrupted traditional employment relationships and complicated the application of existing labour law frameworks.",
+    "Geopolitical competition for access to critical minerals is reshaping strategic alliances and trade relationships across the Indo-Pacific region.",
+    "The phenomenal growth of urban populations in sub-Saharan Africa presents both significant development challenges and substantial economic opportunities.",
+    "Psycholinguistic research indicates that the processing of metaphorical language activates neural regions associated with sensorimotor experience.",
+    "The social determinants of health encompass a broad range of structural factors, including income inequality, housing quality, and access to education.",
+    "The philosophical concept of moral luck challenges intuitive assumptions about the relationship between desert, responsibility, and moral judgment.",
+    "Contemporary debates about privacy in the digital age reflect fundamental tensions between security imperatives and civil liberties protections.",
+    "The methodological individualism of neoclassical economics has been critiqued for its failure to account for collective social dynamics and institutional constraints.",
+    "Carbon pricing mechanisms are widely regarded by economists as among the most efficient instruments for reducing greenhouse gas emissions.",
+    "The legitimacy of international arbitration tribunals has been questioned in cases where their decisions constrain the regulatory authority of sovereign states.",
+    "Cognitive load theory has significant implications for instructional design, particularly in the context of complex problem-solving tasks.",
+    "The heterogeneous nature of refugee populations complicates the design of resettlement programs that adequately address diverse needs and circumstances.",
+    "Bioethical frameworks for evaluating emerging medical technologies must grapple with deep uncertainty about long-term consequences for human wellbeing.",
+    "The political economy of trade policy reflects the concentrated influence of industry groups relative to the diffuse interests of consumers.",
+    "Decolonisation of academic curricula requires a critical examination of the epistemic hierarchies that privilege Western knowledge traditions.",
+    "The concept of sustainability has been operationalised in divergent ways across policy domains, reflecting underlying disagreements about values and priorities.",
+    "Advances in behavioural economics have demonstrated that human decision-making systematically deviates from the predictions of classical rational choice theory.",
+    "The speciation of financial instruments over recent decades has increased systemic complexity and created novel challenges for prudential regulation.",
+    "Transitional justice mechanisms must navigate the competing imperatives of accountability, reconciliation, and the reintegration of former combatants.",
+    "The ontological status of abstract entities such as numbers and propositions remains a contested question in the philosophy of mathematics.",
+    "Evidence-based policymaking requires not only rigorous data collection and analysis but also institutional capacity to translate research into practice.",
+    "The increasing concentration of media ownership raises concerns about the plurality of perspectives available in contemporary democratic societies.",
+    "Strategic ambiguity in foreign policy can serve deterrent functions but also carries risks of miscalculation and inadvertent escalation.",
+    "The philosophical tradition of virtue ethics emphasises the cultivation of character as the foundation of moral conduct and human flourishing.",
+    "Soil degradation resulting from intensive agricultural practices poses a long-term threat to global food security and ecosystem resilience.",
+    "The doctrine of parliamentary sovereignty has been progressively qualified in jurisdictions that have adopted constitutionally entrenched human rights protections.",
+    "Computational advances in drug discovery are enabling the identification and optimisation of therapeutic candidates at unprecedented speed and scale.",
+    "The relational nature of identity formation has been foregrounded in sociological theory as a counterpoint to essentialist conceptions of selfhood.",
+    "Fiscal consolidation strategies that prioritise expenditure reduction over revenue enhancement tend to have asymmetric distributional consequences.",
+    "The application of machine learning algorithms to judicial sentencing raises fundamental concerns about algorithmic bias and procedural fairness.",
+    "Ethnographic approaches to organisational research provide rich insights into informal practices and cultural dynamics that quantitative methods often obscure.",
+    "The normative framework of cosmopolitanism challenges the moral significance ascribed to national borders in the distribution of rights and resources.",
+    "The rapid development of large language models has reignited philosophical debate about the nature of intelligence, understanding, and consciousness.",
+    "Regional economic integration initiatives have yielded significant welfare gains but have also generated distributional tensions between member states.",
+    "The securitisation of migration policy reflects a broader tendency to frame population movements primarily through the lens of national security.",
+    "Complexity theory suggests that emergent phenomena at the macro level of social systems cannot be straightforwardly reduced to individual-level behaviour.",
+    "The forensic analysis of ancient DNA is transforming scholarly understanding of prehistoric human migration and the genetic diversity of early populations.",
+    "Deliberate disinformation campaigns exploit cognitive biases and confirmation tendencies to undermine epistemic standards in public discourse.",
+    "The marketisation of social services has been associated with cost reductions but has also raised concerns about equity of access and quality of provision.",
+    "Intersectional analysis reveals how the compounding effects of race, gender, and class produce distinctive patterns of social disadvantage and exclusion.",
+    "The constitutional entrenchment of socioeconomic rights creates obligations that courts must interpret in the context of finite public resources.",
+    "Advances in neuroimaging have provided unprecedented insights into the neural correlates of cognition, emotion, and social behaviour.",
+    "The governance of global commons such as the oceans and atmosphere requires cooperative frameworks that transcend the limitations of state sovereignty.",
+    "Interpretive flexibility in the application of legal norms reflects the inherent indeterminacy of language and the contextual nature of legal reasoning.",
+    "The political salience of identity-based grievances has been amplified by the algorithmic curation of information on social media platforms.",
+    "Sustainable urban mobility requires integrated planning approaches that align land use, transport infrastructure, and economic development objectives.",
+    "The methodological tensions between inductive and deductive approaches to theory building remain a productive site of debate in social science.",
+    "Welfare state retrenchment in the context of fiscal austerity has had disproportionate impacts on vulnerable populations with limited adaptive capacity.",
+    "The phenomenology of chronic illness challenges biomedical reductionism by foregrounding the subjective dimensions of embodied suffering and coping.",
+    "Strategic investment in research and development infrastructure is widely regarded as essential for sustaining long-run productivity growth.",
+    "The ethical permissibility of paternalistic interventions in public health depends critically on assumptions about autonomy, harm, and the limits of consent.",
+    "Multilateral environmental agreements have achieved mixed results, reflecting the difficulty of coordinating action among states with divergent interests.",
+    "The sociology of knowledge examines how social structures and institutional arrangements shape the production and legitimation of scientific knowledge.",
+    "The privatisation of public utilities has generated efficiency gains in some contexts but has also raised concerns about accountability and equity.",
+    "Longitudinal cohort studies provide valuable evidence about developmental trajectories but are susceptible to attrition bias over extended timeframes.",
+    "The normative foundations of international law are contested, with competing theories emphasising consent, natural law, and global governance imperatives.",
+    "Artificial intelligence systems trained on biased datasets will tend to reproduce and potentially amplify existing patterns of discrimination.",
+    "The epistemological challenges posed by underdetermination suggest that empirical evidence alone is insufficient to adjudicate between competing theoretical frameworks.",
+    "Public sector innovation requires organisational cultures that tolerate experimentation and accept that some initiatives will not achieve their intended outcomes.",
+    "The proliferation of non-state actors in international relations has complicated the traditional Westphalian framework of sovereign state interaction.",
+    "The philosophical debate about the nature of consciousness continues to resist resolution despite significant advances in neuroscience and cognitive science.",
+    "Structural adjustment programs imposed by international financial institutions have been criticised for prioritising macroeconomic stability over social development.",
+    "The governance of emerging biotechnologies requires adaptive regulatory frameworks capable of responding to rapid and unpredictable scientific developments.",
+    "The discursive construction of national identity involves selective appropriation of historical events and the marginalisation of alternative narratives.",
+    "Fiscal federalism raises complex questions about the optimal allocation of taxing and spending responsibilities across different levels of government.",
+    "The sociology of education examines how schooling systems reproduce social stratification while simultaneously serving as sites of potential social mobility.",
+    "Technological disruption of established industries generates both significant economic opportunities and substantial transitional costs for affected workers.",
+    "The legitimacy of humanitarian intervention remains deeply contested in international law and continues to generate significant normative controversy.",
+    "Predictive analytics applied to criminal justice data risks entrenching historical biases under the guise of objective algorithmic assessment.",
+    "The interdependence of ecological systems means that the degradation of one component can produce cascading effects across the broader environment.",
+    "Transdisciplinary research approaches are increasingly necessary to address the complex, multidimensional nature of contemporary social and environmental challenges.",
+    "The philosophical concept of distributive justice encompasses competing principles including equality, sufficiency, desert, and prioritarianism.",
+    "Macroprudential regulation seeks to address systemic risks in financial systems that microprudential oversight of individual institutions cannot adequately capture.",
+    "The commodification of personal data by digital platforms raises fundamental questions about privacy, consent, and the governance of information economies.",
+    "Restorative justice approaches prioritise repairing harm and rebuilding relationships over punitive responses to criminal behaviour.",
+    "The sociology of professions examines how occupational groups seek to establish and maintain jurisdictional control over specialised bodies of knowledge.",
+    "Strategic litigation has emerged as an important mechanism for advancing human rights norms and holding powerful actors accountable.",
+    "The relationship between economic inequality and political polarisation has become a central concern in contemporary political science research.",
+    "Constructivist theories of international relations emphasise the role of ideas, norms, and identities in shaping state behaviour and foreign policy.",
+    "The increasing sophistication of cyberattacks poses significant challenges to critical infrastructure protection and national security strategy.",
+    "Phenomenological approaches to research prioritise the detailed description and interpretation of lived experience as a foundation for theoretical insight.",
+    "The financialisation of the global economy has shifted corporate governance norms toward short-term shareholder value maximisation at the expense of longer-term stakeholder interests.",
+    "Environmental impact assessments must incorporate consideration of cumulative effects and indirect consequences that may not be immediately apparent.",
+    "The politics of recognition, as theorised by political philosophers, addresses the ways in which cultural and social identities are affirmed or denied in public life.",
+    "The global burden of non-communicable diseases reflects complex interactions between genetic predisposition, environmental exposures, and lifestyle factors.",
+    "Interpretive approaches to policy analysis draw attention to the role of meaning, narrative, and contestation in shaping policy outcomes.",
+    "The transition from fossil fuels to renewable energy sources requires coordinated action across technology, finance, policy, and social domains.",
+    "Normative democratic theory must grapple with the tension between the procedural requirements of majority rule and the substantive protection of minority rights.",
+    "The anthropology of development critically examines the cultural assumptions and power relations embedded in international development discourse and practice.",
+    "Applied ethics draws on a range of theoretical frameworks to address practical moral dilemmas arising in professional and public contexts.",
+    "The political economy of taxation reflects distributional conflicts between social groups with divergent interests in the structure of the fiscal system.",
+    "Socioecological systems research integrates insights from ecology and social science to understand the dynamics of human-environment interactions.",
+    "The growing prevalence of chronic loneliness in contemporary societies has been identified as a significant public health concern with wide-ranging consequences.",
+    "Critical discourse analysis examines how language use in texts and social interactions reproduces or challenges existing relations of power.",
+    "The jurisprudence of international human rights law continues to evolve through the interpretive decisions of treaty bodies and regional courts.",
+    "Neoliberal restructuring of public institutions has often been accompanied by the displacement of professional judgment by standardised performance metrics.",
+    "The ethical governance of research involving human participants requires robust institutional frameworks for informed consent and risk management.",
+    "The sociology of science and technology examines how social, political, and economic factors shape the direction and application of scientific inquiry.",
+    "The emergence of transnational advocacy networks has created new pathways for civil society actors to influence international norms and institutional practices.",
+    "Comparative constitutional law reveals both the convergence and divergence of democratic governance models across different political and cultural contexts.",
+    "The discourse of meritocracy obscures structural barriers to social mobility and naturalises inequalities that are in fact products of systemic disadvantage.",
+    "The integration of mental health literacy into school curricula is an increasingly important component of comprehensive public health strategies.",
+    "Technocratic governance models privilege expert knowledge over democratic deliberation, raising important questions about legitimacy and accountability.",
+    "The relational ontology advanced by some feminist philosophers challenges the individualist assumptions that underpin much of mainstream liberal political theory.",
+    "Subnational governments are playing an increasingly important role in climate governance, particularly in contexts where national policy ambition is constrained.",
+    "The epistemics of policy evaluation are complicated by attribution problems, counterfactual reasoning, and the influence of pre-existing theoretical commitments.",
+    "Cross-national comparative research must be attentive to the ways in which concepts and measures may not be equivalent across different cultural and institutional contexts.",
+    "The philosophical literature on personal identity raises deep questions about the criteria of continuity that underpin our ordinary judgments of persistence over time.",
+    "Strategic communication in organisations involves the deliberate alignment of messaging with institutional values, audience characteristics, and contextual imperatives.",
+    "The governance challenges posed by artificial general intelligence will require unprecedented levels of international cooperation and institutional innovation.",
+    "Theoretical pluralism in the social sciences reflects genuine disagreement about the nature of social reality and the appropriate methods for its investigation.",
+    "The political mobilisation of religious identity has become an increasingly prominent feature of democratic politics in diverse national contexts.",
+    "Environmental humanities scholarship explores the cultural, historical, and ethical dimensions of human relationships with the natural world.",
+    "The financialisation of everyday life has exposed ordinary households to financial risks that were previously managed through collective institutional arrangements.",
+    "Deliberative processes in environmental planning can enhance the legitimacy and durability of decisions, but require careful design to be genuinely inclusive.",
+    "The constitutionalisation of rights in many jurisdictions has transferred significant policymaking authority from elected legislatures to appointed courts.",
+    "The sociology of risk examines how modern societies identify, classify, and respond to the hazards generated by their own technological and institutional arrangements.",
+    "International migration governance is characterised by significant fragmentation, with no single multilateral framework governing the movement of people across borders.",
+    "The normative case for global redistribution rests on cosmopolitan premises about the arbitrary nature of nationality as a basis for differential life chances.",
+    "Sociological accounts of organisational culture emphasise the role of shared meanings and taken-for-granted assumptions in shaping collective behaviour.",
+    "The governance of digital infrastructure raises important questions about the concentration of private power and its implications for public interests.",
+    "Philosophical accounts of moral progress seek to explain how collective moral judgments evolve over time without presupposing a fixed external standard.",
+    "The spatial dimensions of social inequality are increasingly recognised as important determinants of life outcomes and opportunity structures.",
+    "Translational research bridges the gap between basic scientific discovery and clinical application, but faces significant institutional and funding challenges.",
+    "The politics of austerity reflect contested empirical claims about the macroeconomic effects of fiscal consolidation as well as deeper normative disagreements.",
+    "The ethnography of global supply chains reveals the human costs of price competition and the limitations of voluntary corporate social responsibility frameworks.",
+    "The sociology of the body examines how physical appearance, embodiment, and health are shaped by and reflective of social relations and cultural norms.",
+    "Normative theories of punishment must address foundational questions about the justification of state coercion and the limits of retributive and consequentialist reasoning.",
+    "The integration of intersectional frameworks into policy design enables more nuanced identification of the compounding disadvantages faced by multiply marginalised groups.",
+    "The governance of synthetic biology requires precautionary approaches that account for the deep uncertainties associated with the manipulation of living organisms.",
+    "Postmodern critiques of master narratives have influenced historical methodology by drawing attention to the partiality and selectivity of all historical accounts.",
+    "The geopolitics of water scarcity is expected to become an increasingly significant source of interstate tension as climate change intensifies hydrological stress.",
+    "The philosophy of language examines how meaning is constituted, communicated, and interpreted in the context of social practices and conventions.",
+    "The digital transformation of public services raises questions about equitable access, data sovereignty, and the appropriate boundaries of automated decision-making.",
+    "Philosophical pragmatism holds that the meaning and truth of propositions should be evaluated in terms of their practical consequences and utility.",
+    "The management of transboundary environmental problems requires institutional arrangements capable of coordinating action across sovereign jurisdictions.",
+    "The sociology of emotions examines how feeling rules and emotional labour shape interpersonal interactions and organisational life.",
+    "The acceleration of technological change has created significant challenges for educational systems seeking to prepare learners for uncertain and evolving labour markets.",
+    "The normative foundations of international trade law are contested between advocates of free trade liberalisation and those who emphasise policy space for development.",
+    "Reflexive governance frameworks acknowledge the limitations of rational-comprehensive planning and seek to incorporate learning and adaptation into policy processes.",
+    "The political philosophy of recognition addresses the relationship between social struggles for acknowledgment and broader questions of justice and democratic participation.",
+    "The securitisation of public health has generated significant debate about the appropriate balance between emergency powers and civil liberties protections.",
+    "The theory of communicative action advanced by Habermas provides a normative framework for evaluating the quality of public deliberation in democratic societies.",
+    "The epistemological challenges associated with cross-cultural research demand reflexive methodological frameworks that account for positionality and interpretive contingency.",
+    "Structural racism operates through institutional mechanisms that systematically disadvantage racialised groups regardless of the intentions of individual actors.",
+    "The increasing salience of non-state actors in global governance reflects the inadequacy of state-centric frameworks for addressing transnational challenges.",
+    "The philosophical critique of instrumental rationality, articulated most forcefully by the Frankfurt School, remains highly relevant to contemporary debates about technology.",
+    "The normative tension between procedural and substantive conceptions of democracy is reflected in ongoing debates about the appropriate role of judicial review.",
+    "Institutional path dependence explains why welfare state architectures established in the postwar period have proven remarkably resistant to neoliberal reform pressures.",
+    "The discourse of evidence-based medicine has been critiqued for privileging quantitative methodologies at the expense of contextual and experiential knowledge.",
+    "The epistemological status of social scientific generalisation has been contested by scholars who emphasise the contextually contingent nature of social phenomena.",
+    "Transnational legal processes involve the complex interaction of domestic and international legal norms across multiple jurisdictional boundaries and institutional settings.",
+    "The sociology of education must engage critically with the ways in which schooling systems simultaneously reproduce and challenge existing structures of power and privilege.",
+    "Poststructuralist approaches to policy analysis draw attention to the discursive construction of policy problems and the exclusion of alternative framings.",
+    "The governance of artificial intelligence raises fundamental questions about the distribution of benefits and risks across different social groups and national contexts.",
+    "The relationship between economic development and democratisation remains empirically contested, with evidence supporting both virtuous cycle and divergent trajectory hypotheses.",
+    "Critical realism offers a sophisticated ontological framework for social science that acknowledges the causal efficacy of structures while preserving space for human agency.",
+    "The politics of expertise involves negotiation between technical authority, democratic accountability, and the competing claims of affected publics.",
+    "Environmental justice scholarship highlights the disproportionate exposure of marginalised communities to environmental hazards and the unequal distribution of environmental goods.",
+    "The logic of collective action explains why rational individuals may systematically undercontribute to the provision of public goods in the absence of coercive mechanisms.",
+    "Philosophical accounts of wellbeing must navigate between subjective preference satisfaction and objective list theories of human flourishing.",
+    "The governance of global value chains requires regulatory frameworks that can hold lead firms accountable for labour and environmental standards throughout the supply network.",
+    "The theoretical framework of intersectionality, originating in Black feminist scholarship, provides essential tools for analysing compounded forms of social oppression.",
+    "The comparative study of electoral systems reveals significant variation in the representation of minority groups and women across different institutional designs.",
+    "Discursive institutionalism examines how ideas and discourse function as both explanatory variables and normative frameworks in processes of institutional change.",
+    "The normative case for affirmative action rests on contested empirical and philosophical claims about the causes and remedies of structural disadvantage.",
+    "Metacognitive awareness enables learners to regulate their own cognitive processes and to deploy strategies adaptively in response to changing task demands.",
+    "The political philosophy of recognition and redistribution articulated by Nancy Fraser provides a framework for understanding and addressing multidimensional social injustice.",
+    "The sociology of knowledge production examines how academic disciplines are shaped by institutional incentives, funding structures, and broader social and political contexts.",
+    "The governance of financial conglomerates presents particular challenges for regulators seeking to identify and contain systemic risk across interconnected entities.",
+    "Constructivist approaches to security studies emphasise the role of identity, norms, and intersubjective understandings in shaping threat perception and strategic behaviour.",
+    "The epistemological debate between positivist and interpretivist traditions in social science reflects deeper disagreements about the nature of social reality and scientific explanation.",
+    "The political economy of development finance is shaped by competing interests of donor governments, multilateral institutions, recipient states, and affected communities.",
+    "Ethnomethodological approaches to social research investigate the practical reasoning and interactional procedures through which social actors accomplish orderly everyday life.",
+    "The normative justification for intellectual property rights must balance the incentive to innovate against the social costs of restricting access to knowledge.",
+    "The literature on social capital examines how networks of trust and reciprocity shape economic behaviour and collective action within and across communities.",
+    "The global governance of pandemic preparedness requires coordinated investment in surveillance systems, healthcare infrastructure, and equitable vaccine distribution mechanisms.",
+    "The philosophical analysis of narrative reveals how storytelling functions as a fundamental mode of organising human experience, identity, and moral understanding.",
+    "The theory of comparative advantage, while influential in international trade policy, has been challenged for ignoring dynamic effects and the distributional consequences of specialisation.",
+    "The sociological concept of habitus describes the durable dispositions that structure social practice and reproduce class positions across generations.",
+    "Digital sovereignty has emerged as a contested concept in debates about the appropriate governance of data, platforms, and digital infrastructure in the national interest.",
+    "The constitutional entrenchment of property rights creates tensions with democratic majorities seeking to pursue redistributive or regulatory objectives.",
+    "The phenomenology of temporality examines how human consciousness structures the experience of past, present, and future in ways that are constitutive of selfhood.",
+    "The comparative institutional analysis of varieties of capitalism highlights the institutional complementarities that distinguish liberal from coordinated market economies.",
+    "The political theory of civil disobedience examines the conditions under which lawbreaking may be justified as a form of democratic participation and moral protest.",
+    "The methodological challenges of studying rare events, such as financial crises or political revolutions, have important implications for causal inference and theory building.",
+    "The sociology of consumption examines how patterns of material and cultural consumption are shaped by and reflective of social structures of class, gender, and identity.",
+    "The governance of transnational corporations requires international frameworks that can address the structural asymmetries between the mobility of capital and the jurisdiction of states.",
+    "The philosophy of action examines the conceptual relationship between beliefs, desires, intentions, and the rational explanation of human behaviour.",
+    "The discourse of resilience in policy and planning reflects a shift from prevention to adaptation as the dominant framework for governing risk and uncertainty.",
+    "The critical examination of globalisation must attend to its uneven geographical development and its differential impacts on workers, communities, and ecosystems.",
+    "Normative theories of global justice must grapple with the tension between universal moral principles and the political realities of a world organised into sovereign states.",
+    "The sociological study of social movements examines the conditions under which collective actors mobilise to challenge or defend existing social arrangements.",
+    "The governance of scientific research requires institutional mechanisms to ensure integrity, manage conflicts of interest, and promote equitable access to knowledge.",
+    "The epistemological implications of quantum mechanics have generated sustained philosophical debate about the foundations of physical theory and the nature of reality.",
+    "The sociology of the family must engage with the diverse forms of intimate and caring relationships that organise everyday life across different cultural contexts.",
+    "The political economy of healthcare financing reflects distributional conflicts between competing interests in the allocation of a socially significant public resource.",
+    "The emergence of new populist movements across diverse political systems reflects underlying crises of political representation and social solidarity.",
+    "The philosophical debate about the existence and nature of God has important implications for ethical theory, political philosophy, and the philosophy of science.",
+    "The governance of emerging nanotechnologies must balance the potential benefits of innovation against poorly understood risks to human health and the environment.",
+    "The sociology of organisations examines how formal structures, informal norms, and power relations shape behaviour and outcomes within institutional settings.",
+    "The political theory of republicanism emphasises the importance of non-domination and civic participation as foundational values of legitimate political order.",
+    "The growing body of research on social determinants of mental health challenges individualist framings that locate the causes and solutions of mental illness within the person.",
+    "The comparative analysis of higher education systems reveals important variation in the relationship between universities, states, markets, and civil society.",
+    "The philosophy of mind continues to grapple with the hard problem of consciousness and its implications for our understanding of the relationship between mind and brain.",
+    "The governance of information ecosystems requires regulatory frameworks capable of addressing both the concentration of platform power and the proliferation of harmful content.",
+    "The sociological concept of social capital has been subject to critique for obscuring power relations and serving ideological functions in policy discourse.",
+    "The normative debate about immigration policy involves fundamental questions about membership, obligation, and the moral claims of prospective migrants on receiving societies.",
+    "The political sociology of populism examines how populist actors construct antagonistic identities between a virtuous people and a corrupt elite.",
+    "The governance of global health requires attention to the political economy of pharmaceutical innovation and the structural barriers to access in low-income countries.",
+    "The philosophy of language examines the relationship between linguistic meaning, mental representation, and the social practices through which communication is accomplished.",
+    "The sociological study of stratification must engage with the complex interplay of class, race, gender, and other axes of inequality in shaping life chances.",
+    "The political theory of federalism examines the normative and institutional conditions under which the division of authority between levels of government can be justified.",
+    "The governance of the digital economy raises important questions about taxation, competition policy, and the regulation of dominant platform firms.",
+    "The sociology of work examines how transformations in labour markets and employment relations are reshaping the experience of work and the structures of working life.",
+    "The normative foundations of criminal justice must address foundational tensions between desert-based retributivism, deterrence, rehabilitation, and restorative approaches.",
+    "The epistemological debate about the value of qualitative and quantitative methods reflects deeper questions about what counts as valid knowledge in the social sciences.",
+    "The governance of artificial intelligence in public sector decision-making requires robust frameworks for transparency, accountability, and the protection of individual rights.",
+    "The sociological analysis of poverty must distinguish between its material dimensions and its relational and symbolic aspects, including stigma and social exclusion.",
+    "The political philosophy of multiculturalism examines the appropriate response of liberal democratic states to the claims of cultural minorities for recognition and accommodation.",
+    "The governance of biosecurity requires international cooperation to prevent the deliberate or accidental release of pathogens capable of causing widespread harm.",
+    "The sociology of professions must engage with the ways in which professional authority is constructed, contested, and reproduced through institutional and discursive practices.",
+    "The normative debate about the rights of future generations raises profound questions about intergenerational justice and the temporal scope of moral obligation.",
+    "The political economy of development must grapple with the structural conditions that perpetuate dependency and constrain the policy autonomy of developing states.",
+    "The governance of the internet requires multilateral frameworks capable of reconciling competing national interests with the technical requirements of global interoperability.",
+    "The sociology of education must examine the ways in which curriculum, pedagogy, and assessment reproduce and legitimate particular forms of cultural knowledge and social hierarchy.",
+    "The philosophical debate about the nature and grounds of human rights must engage with both universalist claims and the challenge of cultural relativism.",
+    "The governance of climate finance requires mechanisms to mobilise and direct investment toward mitigation and adaptation in ways that are equitable and effective.",
+    "The sociological concept of field, developed by Bourdieu, provides a framework for analysing the structured spaces of social practice in which actors compete for position.",
+    "The normative theory of democratic deliberation must engage with the practical constraints that limit the quality of public reasoning in contemporary political systems.",
+    "The governance of global commons requires institutional arrangements that can manage collective action problems at the international level without sacrificing equity and justice.",
+    "The sociology of religion must engage with the diverse ways in which religious beliefs, practices, and institutions shape social life in both secular and religious societies.",
+    "The political philosophy of justice must grapple with the tension between the demands of equality and the value of individual liberty in the design of social institutions.",
+    "The governance of technology-mediated work requires regulatory frameworks that can address the shifting boundaries of employment, labour rights, and social protection.",
+    "The sociology of knowledge must engage with the social conditions that enable and constrain the production, validation, and dissemination of different forms of expertise.",
+    "The normative debate about global economic governance reflects deep disagreements about the appropriate balance between market efficiency and democratic accountability.",
+    "The political philosophy of civil society examines the role of voluntary associations and informal networks in sustaining democratic culture and civic engagement.",
+    "The governance of emerging infectious diseases requires adaptive institutional arrangements capable of responding rapidly to novel biological threats under conditions of uncertainty.",
+    "The sociological study of social inequality must examine the complex interactions between structural forces and individual agency in the reproduction of disadvantage.",
+    "The normative framework of capabilities, developed by Sen and Nussbaum, offers an alternative to utility-based approaches to evaluating individual wellbeing and social justice.",
+    "The governance of digital currencies and decentralised finance systems presents novel regulatory challenges that existing financial frameworks are poorly equipped to address.",
+    "The political sociology of bureaucracy examines how administrative organisations exercise discretionary authority and resist political direction in democratic systems.",
+    "The philosophical tradition of pragmatism offers a conception of knowledge as instrumentally oriented toward the resolution of practical problems rather than toward correspondence with reality."
+  ]
+};
+
+// Google Cloud Neural2 voices（比 WaveNet 更自然，同价格）
+// 每个口音提供男女两个声音选项
+const VOICES = {
+  AU: { M:'en-AU-Neural2-B', F:'en-AU-Neural2-A' },
+  UK: { M:'en-GB-Neural2-B', F:'en-GB-Neural2-F' },
+  US: { M:'en-US-Neural2-D', F:'en-US-Neural2-C' },
+  IN: { M:'en-IN-Wavenet-B', F:'en-IN-Wavenet-A' }  // 印度暂无Neural2，保持WaveNet
+};
+const LANGS = { AU:'en-AU', UK:'en-GB', US:'en-US', IN:'en-IN' };
+
+// ── STATE ─────────────────────────────────────────────
+const S = {
+  diff:'medium', pool:[], idx:0,
+  speed:1.0, accent:'AU', gender:'M',
+  apiKey: localStorage.getItem('gcKey')||'',
+  recording:false, mediaRec:null, audioChunks:[], userText:'', recMimeType:'',
+  recTimer:null, waveInt:null, curAudio:null,
+  mistakes: JSON.parse(localStorage.getItem('pteMistakes')||'[]'),
+  cost: parseFloat(localStorage.getItem('pteCost')||'0')
+};
+
+// ── NAV ───────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  // reset all nav highlights
+  document.querySelectorAll('.nav-it').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll(`[id^="nav-${name}"]`).forEach(b=>b.classList.add('on'));
+  if(name==='mistakes') renderMistakes();
+  if(name==='settings'){
+    if(S.apiKey) document.getElementById('key-tts').value=S.apiKey;
+  }
+}
+
+// ── SETTINGS ──────────────────────────────────────────
+function saveKey(){
+  const v=document.getElementById('key-tts').value.trim();
+  const st=document.getElementById('key-st');
+  if(!v.startsWith('AIza')){ st.textContent='⚠️ 格式不正确，应以 AIza 开头'; return; }
+  S.apiKey=v; localStorage.setItem('gcKey',v);
+  st.textContent='✅ 已保存';
+  updateCostDisplay();
+  setTimeout(()=>st.textContent='',2500);
+}
+
+// ── DIFF / SPEED / ACCENT ─────────────────────────────
+function setDiff(d){
+  S.diff=d;
+  ['easy','medium','hard'].forEach(x=>document.getElementById('d-'+x).className='seg-btn'+(x===d?' on-blue':''));
+  initPool(); showSentence();
+}
+function setSpeed(s){
+  S.speed=s;
+  [75,100,125].forEach(x=>document.getElementById('sp-'+x).className='seg-btn'+(x===s*100?' on-green':''));
+}
+function setAccent(a){
+  S.accent=a;
+  ['AU','UK','US','IN'].forEach(x=>document.getElementById('ac-'+x).className='seg-btn'+(x===a?' on-purple':''));
+  updateVoiceDisplay();
+}
+function setGender(g){
+  S.gender=g;
+  ['M','F'].forEach(x=>document.getElementById('gd-'+x).className='seg-btn'+(x===g?' on-blue':''));
+  updateVoiceDisplay();
+}
+function updateVoiceDisplay(){
+  const name=VOICES[S.accent][S.gender];
+  const el=document.getElementById('voice-name-display');
+  if(el) el.textContent=name;
+}
+
+// ── SENTENCES ─────────────────────────────────────────
+function initPool(){
+  // Pick 10 random unique sentences from the pool each session
+  const all=[...DATA[S.diff]].sort(()=>Math.random()-.5);
+  S.pool=all.slice(0,10);
+  S.idx=0;
+}
+
+function showSentence(){
+  stopAll();
+  S.userText='';
+  document.getElementById('sent-box').textContent=S.pool[S.idx];
+  document.getElementById('sent-box').classList.add('blr');
+  document.getElementById('result').style.display='none';
+  document.getElementById('trans').textContent='录音后您的复述将出现在这里...';
+  document.getElementById('trans').classList.remove('has');
+  setPill('blue','准备聆听');
+  const pb=document.getElementById('play-btn');
+  pb.disabled=false; pb.className='play-btn';
+  pb.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> 播放音频';
+  const mb=document.getElementById('mic-btn');
+  mb.disabled=true; mb.className='mic-btn';
+  document.getElementById('mic-st').textContent='先播放音频';
+  document.getElementById('mic-st').classList.remove('act');
+  document.getElementById('play-fill').style.width='0%';
+  document.getElementById('play-fill').className='prog-fill';
+  document.getElementById('rec-t').textContent='';
+  stopWave();
+  document.getElementById('sc-practice').scrollTop=0;
+}
+
+function nextSentence(){ S.idx=(S.idx+1)%S.pool.length; showSentence(); }
+
+// ── TTS ───────────────────────────────────────────────
+async function playSentence(){
+  if(!S.apiKey){ alert('请先在设置中填写 Google Cloud API Key'); showPage('settings'); return; }
+  const sent=S.pool[S.idx];
+  const pb=document.getElementById('play-btn');
+  pb.disabled=true; pb.className='play-btn playing';
+  pb.innerHTML='<div style="width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;"></div> 加载声音...';
+  setPill('amber','正在播放...');
+
+  const dur=Math.max(2000, sent.split(' ').length*380/S.speed);
+  let prog=0;
+  const fill=document.getElementById('play-fill');
+  const pi=setInterval(()=>{
+    prog=Math.min(prog+100/(dur/100),100);
+    fill.style.width=prog+'%';
+    fill.className='prog-fill'+(prog>75?' d':prog>50?' w':'');
+    if(prog>=100) clearInterval(pi);
+  },100);
+
+  try{
+    const voiceName = VOICES[S.accent][S.gender];
+    const res=await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${S.apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        input:{text:sent},
+        voice:{languageCode:LANGS[S.accent], name:voiceName},
+        audioConfig:{audioEncoding:'MP3', speakingRate:S.speed, pitch:0}
+      })
+    });
+    if(!res.ok) throw new Error(await res.text());
+    const d=await res.json();
+    const audio=new Audio('data:audio/mp3;base64,'+d.audioContent);
+    S.curAudio=audio;
+    pb.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 播放中...';
+    audio.onended=()=>{ clearInterval(pi); onPlayEnd(); };
+    audio.onerror=()=>{ clearInterval(pi); fallbackTTS(sent); };
+    audio.play();
+    // Google WaveNet TTS cost: ~$0.000016/char
+    addCost(sent.length * 0.000016);
+  } catch(e){
+    clearInterval(pi);
+    fallbackTTS(sent);
+  }
+}
+
+function fallbackTTS(sent){
+  const utt=new SpeechSynthesisUtterance(sent);
+  utt.lang=LANGS[S.accent]; utt.rate=S.speed;
+  utt.onend=onPlayEnd; utt.onerror=onPlayEnd;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utt);
+  const pb=document.getElementById('play-btn');
+  pb.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 播放中 (系统声音)';
+}
+
+function onPlayEnd(){
+  document.getElementById('sent-box').classList.remove('blr');
+  setPill('green','请立即复述');
+  const pb=document.getElementById('play-btn');
+  pb.disabled=false; pb.className='play-btn';
+  pb.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> 再听一遍';
+  // 重置录音区，让用户可以重新录
+  S.userText='';
+  document.getElementById('result').style.display='none';
+  document.getElementById('trans').textContent='录音后您的复述将出现在这里...';
+  document.getElementById('trans').classList.remove('has');
+  document.getElementById('rec-t').textContent='';
+  stopWave();
+  const mb=document.getElementById('mic-btn');
+  mb.disabled=false; mb.className='mic-btn ready';
+  document.getElementById('mic-st').textContent='点击麦克风开始录音';
+  document.getElementById('mic-st').classList.remove('act');
+}
+
+// ── RECORDING ─────────────────────────────────────────
+function toggleMic(){ if(!S.recording) startRec(); else stopRec(); }
+
+async function startRec(){
+  if(!S.apiKey){ alert('请先在设置中填写语音 Key'); showPage('settings'); return; }
+
+  let stream;
+  try{
+    // 优化录音质量：指定采样率、开启降噪和回声消除
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio:{
+        sampleRate: 16000,
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    });
+  } catch(e){
+    // 如果高级参数不支持，退回基本模式
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    } catch(e2){
+      alert('无法访问麦克风，请在 Safari 设置中允许麦克风权限'); return;
+    }
+  }
+
+  S.recording=true;
+  S.audioChunks=[];
+  S.userText='';
+
+  const trans=document.getElementById('trans');
+  trans.textContent='录音中...请复述句子';
+  trans.classList.remove('has');
+  document.getElementById('rec-t').textContent='';
+  document.getElementById('mic-btn').className='mic-btn rec';
+  const st=document.getElementById('mic-st');
+  st.textContent='录音中...请复述句子'; st.classList.add('act');
+  startWave();
+
+  let t=0;
+  clearInterval(S.recTimer);
+  S.recTimer=setInterval(()=>{ t++; document.getElementById('rec-t').textContent=fmt(t); if(t>=15) stopRec(); },1000);
+
+  // iOS Safari 只支持 audio/mp4，优先检测
+  const mimeType = MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4'
+    : MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
+    : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
+
+  // 存下实际 mimeType 供 transcribeAudio 使用
+  S.recMimeType = mimeType;
+
+  try{
+    S.mediaRec = new MediaRecorder(stream, mimeType ? {mimeType} : {});
+  } catch(e){
+    S.mediaRec = new MediaRecorder(stream);
+    S.recMimeType = S.mediaRec.mimeType || 'audio/mp4';
+  }
+
+  S.mediaRec.ondataavailable = e => {
+    if(e.data && e.data.size>0) S.audioChunks.push(e.data);
+  };
+
+  S.mediaRec.onstop = () => {
+    stream.getTracks().forEach(t=>t.stop());
+    transcribeAudio();
+  };
+
+  S.mediaRec.onerror = () => {};
+  S.mediaRec.start(500);
+}
+
+function stopRec(){
+  if(!S.recording) return;
+  S.recording=false;
+  clearInterval(S.recTimer);
+  stopWave();
+
+  document.getElementById('mic-btn').className='mic-btn';
+  document.getElementById('mic-btn').disabled=true;
+  const st=document.getElementById('mic-st');
+  st.textContent='识别中...'; st.classList.remove('act');
+  setPill('purple','识别中...');
+
+  if(S.mediaRec && S.mediaRec.state==='recording'){
+    S.mediaRec.stop();
+  } else {
+    transcribeAudio();
+  }
+}
+
+async function transcribeAudio(){
+  const trans=document.getElementById('trans');
+  if(S.audioChunks.length===0){
+    trans.textContent='未录到声音，请重试';
+    setTimeout(showResult,300); return;
+  }
+
+  try{
+    // 使用录音时记录的实际 mimeType
+    const mimeType = S.recMimeType || S.mediaRec?.mimeType || 'audio/mp4';
+    const blob = new Blob(S.audioChunks, {type: mimeType});
+
+    // Convert to base64
+    const base64 = await new Promise((resolve,reject)=>{
+      const r=new FileReader();
+      r.onload=()=>resolve(r.result.split(',')[1]);
+      r.onerror=reject;
+      r.readAsDataURL(blob);
+    });
+
+    // 正确的格式映射：iOS Safari 录制 audio/mp4 → Google STT 用 MP3 最兼容
+    let encoding, sampleRate;
+    if(mimeType.includes('mp4')){
+      encoding = 'MP3';      // MP4/AAC 用 MP3 兼容模式
+      sampleRate = 44100;
+    } else if(mimeType.includes('ogg')){
+      encoding = 'OGG_OPUS';
+      sampleRate = 48000;
+    } else {
+      encoding = 'WEBM_OPUS';
+      sampleRate = 48000;
+    }
+
+    // 把当前句子的词语作为提示词，帮助 STT 优先识别这些词
+    const currentSent = S.pool[S.idx] || '';
+    const hintWords = currentSent.replace(/[^a-zA-Z\s]/g,'').split(/\s+/).filter(Boolean);
+
+    const res = await fetch(`https://speech.googleapis.com/v1/speech:recognize?key=${S.apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        config:{
+          encoding: encoding,
+          sampleRateHertz: sampleRate,
+          languageCode: LANGS[S.accent],
+          alternativeLanguageCodes:['en-AU','en-US','en-GB'],
+          enableAutomaticPunctuation: false,
+          model: 'video',          // 'video' 模型比 'latest_long' 对各种录音质量更准
+          useEnhanced: true,       // 开启增强模式
+          // 把句子词语作为语境提示，提升识别准确率
+          speechContexts:[{
+            phrases: hintWords,
+            boost: 15             // 提升这些词的识别权重
+          }]
+        },
+        audio:{ content: base64 }
+      })
+    });
+
+    const d = await res.json();
+    if(!res.ok) throw new Error(d.error?.message || JSON.stringify(d));
+    const text = d.results?.map(r=>r.alternatives?.[0]?.transcript||'').join(' ').trim() || '';
+
+    S.userText = text;
+    if(text){
+      trans.textContent = text;
+      trans.classList.add('has');
+    } else {
+      trans.textContent = '未能识别，请再试一次';
+    }
+    addCost(0.001);
+  } catch(e){
+    // 如果 video 模型失败（某些地区不支持），自动降级到 latest_long
+    if(e.message.includes('video') || e.message.includes('model')){
+      await transcribeAudioFallback();
+      return;
+    }
+    trans.textContent = '识别失败：'+e.message;
+  }
+
+  document.getElementById('mic-st').textContent='录音完成 ✓';
+  setPill('purple','查看结果');
+  setTimeout(showResult, 300);
+}
+
+// 降级方案：用 latest_long 模型重试
+async function transcribeAudioFallback(){
+  const trans=document.getElementById('trans');
+  try{
+    const mimeType = S.recMimeType || 'audio/mp4';
+    const blob = new Blob(S.audioChunks, {type: mimeType});
+    const base64 = await new Promise((resolve,reject)=>{
+      const r=new FileReader();
+      r.onload=()=>resolve(r.result.split(',')[1]);
+      r.onerror=reject;
+      r.readAsDataURL(blob);
+    });
+    const encoding = mimeType.includes('mp4')?'MP3':mimeType.includes('ogg')?'OGG_OPUS':'WEBM_OPUS';
+    const currentSent = S.pool[S.idx] || '';
+    const hintWords = currentSent.replace(/[^a-zA-Z\s]/g,'').split(/\s+/).filter(Boolean);
+
+    const res = await fetch(`https://speech.googleapis.com/v1/speech:recognize?key=${S.apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        config:{
+          encoding, sampleRateHertz:44100,
+          languageCode: LANGS[S.accent],
+          alternativeLanguageCodes:['en-AU','en-US','en-GB'],
+          enableAutomaticPunctuation: false,
+          model:'latest_long',
+          speechContexts:[{ phrases: hintWords, boost: 15 }]
+        },
+        audio:{ content: base64 }
+      })
+    });
+    const d = await res.json();
+    const text = d.results?.map(r=>r.alternatives?.[0]?.transcript||'').join(' ').trim() || '';
+    S.userText = text;
+    trans.textContent = text || '未能识别，请再试一次';
+    if(text) trans.classList.add('has');
+    addCost(0.001);
+  } catch(e){
+    trans.textContent = '识别失败：'+e.message;
+  }
+  document.getElementById('mic-st').textContent='录音完成 ✓';
+  setPill('purple','查看结果');
+  setTimeout(showResult, 300);
+}
+
+// ── RESULTS ───────────────────────────────────────────
+
+// 虚词列表：这些词识别错误时给予部分宽容
+const FUNC_WORDS = new Set(['a','an','the','to','of','in','on','at','by','for',
+  'with','and','but','or','is','are','was','were','be','been','have','has','had',
+  'do','does','did','will','would','could','should','may','might','that','which',
+  'this','these','those','it','its','as','up','out','about','into','through']);
+
+// 同音/近音词对（STT 常见混淆）
+const HOMOPHONES = {
+  'their':'there','there':'their','they\'re':'there',
+  'your':'you\'re','you\'re':'your',
+  'its':'it\'s','it\'s':'its',
+  'to':'too','too':'to','two':'to',
+  'than':'then','then':'than',
+  'affect':'effect','effect':'affect',
+  'accept':'except',
+  'hear':'here','here':'hear',
+  'no':'know','know':'no',
+  'new':'knew','knew':'new',
+  'write':'right','right':'write',
+  'by':'buy','buy':'by','bye':'by',
+  'sea':'see','see':'sea',
+  'be':'bee',
+  'hour':'our','our':'hour',
+  'won':'one','one':'won',
+  'four':'for','for':'four',
+  'eight':'ate',
+  'whether':'weather','weather':'whether',
+  'principal':'principle',
+  'passed':'past','past':'passed',
+};
+
+function wordsMatch(spoken, original){
+  if(spoken === original) return true;
+  // Levenshtein 距离 ≤1（单字符差异）
+  if(lev(spoken, original) <= 1) return true;
+  // 同音词匹配
+  if(HOMOPHONES[spoken] === original || HOMOPHONES[original] === spoken) return true;
+  // 虚词宽容：如果两者都是虚词且长度相近
+  if(FUNC_WORDS.has(spoken) && FUNC_WORDS.has(original) && Math.abs(spoken.length-original.length)<=1) return true;
+  // 前缀匹配：spoken 是 original 的前缀（>3字符），处理尾音脱落
+  if(spoken.length>3 && original.startsWith(spoken)) return true;
+  // 去掉 s/ed/ing/ly 后缀再比较
+  const strip = w => w.replace(/(ing|ed|ly|s|'s|n't)$/,'');
+  if(strip(spoken)===strip(original) && strip(spoken).length>2) return true;
+  return false;
+}
+
+function showResult(){
+  const orig=S.pool[S.idx];
+  const spoken=S.userText||'';
+
+  // 清理文字：去除标点，转小写
+  const cleanWord = w => w.toLowerCase().replace(/[^a-z']/g,'');
+  const ow = orig.split(/\s+/).map(cleanWord).filter(Boolean);
+  const sw = spoken.split(/\s+/).map(cleanWord).filter(Boolean);
+
+  // 用贪心算法按顺序匹配，避免重复计数
+  const usedSpoken = new Array(sw.length).fill(false);
+  const matchResult = ow.map(origW => {
+    // 先找完全匹配或近似匹配
+    for(let i=0;i<sw.length;i++){
+      if(!usedSpoken[i] && wordsMatch(sw[i], origW)){
+        usedSpoken[i]=true;
+        return true;
+      }
+    }
+    return false;
+  });
+
+  let matched = matchResult.filter(Boolean).length;
+
+  // 虚词加分：漏掉虚词给半分（PTE 实际评分对虚词要求较低）
+  const missedFuncWords = ow.filter((w,i)=>!matchResult[i] && FUNC_WORDS.has(w)).length;
+  const adjustedMatched = matched + missedFuncWords * 0.5;
+  const acc = Math.round(adjustedMatched / ow.length * 100);
+
+  // 词语对比显示
+  const cmp=document.getElementById('cmp-row');
+  cmp.innerHTML = ow.map((w,i)=>{
+    const ok = matchResult[i];
+    const isFunc = FUNC_WORDS.has(w);
+    const cls = ok ? 'ok' : (isFunc ? 'func' : 'miss');
+    return `<span class="cw ${cls}">${w}</span>`;
+  }).join('');
+
+  // 多余词（说了但原句没有的）
+  sw.forEach((w,i)=>{ if(!usedSpoken[i]) cmp.innerHTML+=`<span class="cw extra">${w}</span>`; });
+
+  function cls(n){ return n>=80?'good':n>=50?'ok':'bad'; }
+  setSc('sc-acc', Math.min(acc,100)+'%', cls(acc));
+  setSc('sc-words', matched+'/'+ow.length, cls(matched/ow.length*100));
+
+  document.getElementById('result').style.display='block';
+  setPill('purple','查看结果');
+  if(acc<70) saveMistake(orig, acc);
+  setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'nearest'}),150);
+}
+
+function setSc(id,val,cls){ const e=document.getElementById(id); e.textContent=val; e.className='sc-v '+cls; }
+
+// ── MISTAKES ──────────────────────────────────────────
+function saveMistake(sent,acc){
+  const ex=S.mistakes.find(m=>m.s===sent);
+  if(ex){ ex.count++; ex.acc=acc; }
+  else S.mistakes.push({s:sent,count:1,acc});
+  S.mistakes.sort((a,b)=>b.count-a.count);
+  localStorage.setItem('pteMistakes',JSON.stringify(S.mistakes));
+}
+
+function renderMistakes(){
+  const list=document.getElementById('mistakes-list');
+  document.getElementById('mi-empty').style.display=S.mistakes.length?'none':'block';
+  list.querySelectorAll('.mi').forEach(e=>e.remove());
+  S.mistakes.forEach((m,i)=>{
+    const div=document.createElement('div'); div.className='mi';
+    div.innerHTML=`<div class="mi-sent">${m.s}</div>
+      <div class="mi-meta">
+        <span class="mi-cnt">出错 ${m.count} 次 &nbsp;·&nbsp; 上次 ${m.acc}%</span>
+        <button class="retry-btn" onclick="retryMistake(${i})">再练</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryMistake(i){
+  const sent=S.mistakes[i].s;
+  S.pool=[sent,...S.pool.filter(s=>s!==sent)]; S.idx=0;
+  showPage('practice'); showSentence();
+}
+
+function clearMistakes(){
+  if(!confirm('确定清空所有错题记录？')) return;
+  S.mistakes=[]; localStorage.removeItem('pteMistakes'); renderMistakes();
+}
+
+// ── WAVEFORM ──────────────────────────────────────────
+function initWave(){
+  const el=document.getElementById('wave'); el.innerHTML='';
+  for(let i=0;i<16;i++){ const b=document.createElement('div'); b.className='wb'; el.appendChild(b); }
+}
+function startWave(){
+  stopWave();
+  S.waveInt=setInterval(()=>{
+    document.querySelectorAll('#wave .wb').forEach(b=>{ b.classList.add('on'); b.style.height=(4+Math.random()*20)+'px'; });
+  },130);
+}
+function stopWave(){
+  if(S.waveInt){ clearInterval(S.waveInt); S.waveInt=null; }
+  document.querySelectorAll('#wave .wb').forEach(b=>{ b.classList.remove('on'); b.style.height='4px'; });
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function setPill(color,text){
+  const el=document.getElementById('phase-pill');
+  el.className='pill pill-'+color;
+  const pulse=color==='green'||color==='amber'?' pulse':'';
+  el.innerHTML=`<div class="dot${pulse}"></div> ${text}`;
+}
+function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+function lev(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function stopAll(){
+  if(S.curAudio){ try{ S.curAudio.pause(); }catch(e){} S.curAudio=null; }
+  window.speechSynthesis?.cancel();
+  if(S.mediaRec && S.mediaRec.state!=='inactive'){
+    S.mediaRec.onstop=null;
+    try{ S.mediaRec.stop(); }catch(e){}
+  }
+  clearInterval(S.recTimer);
+  stopWave();
+  S.recording=false;
+}
+function updateCostDisplay(){
+  const aud=S.cost*1.55;
+  document.getElementById('cost-disp').textContent=S.cost>0?`约 A$${aud.toFixed(3)}`:(S.apiKey?'Key 已就绪':'');
+}
+function addCost(amt){
+  S.cost+=amt; localStorage.setItem('pteCost',S.cost.toFixed(5));
+  updateCostDisplay();
+}
+
+// prevent body bounce scroll on iOS
+document.querySelectorAll('.scroll').forEach(el=>el.addEventListener('touchmove',e=>e.stopPropagation(),{passive:true}));
+document.body.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+
+// ── INIT ──────────────────────────────────────────────
+initWave();
+initPool();
+showSentence();
+updateCostDisplay();
+updateVoiceDisplay();
+</script>
+</body>
+</html>
